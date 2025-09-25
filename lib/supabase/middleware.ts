@@ -49,6 +49,22 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
+  // If this is an API/fetch request or a Next internal asset, don't perform a
+  // redirect here. Redirecting fetch/XHR/curl calls to the login HTML page
+  // causes clients that expect JSON to fail with Parsing/Syntax errors and
+  // unexpected 404/HTML responses. Let the API route handlers manage auth
+  // responses (they can return 401/403 or handle missing sessions).
+  const accept = request.headers.get("accept") ?? "";
+  if (
+    request.nextUrl.pathname.startsWith("/api") ||
+    accept.includes("application/json") ||
+    request.nextUrl.pathname.startsWith("/_next") ||
+    // static files (has extension)
+    request.nextUrl.pathname.includes(".")
+  ) {
+    return supabaseResponse;
+  }
+
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
