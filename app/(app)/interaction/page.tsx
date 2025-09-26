@@ -1,24 +1,9 @@
-import { Card, Heading, Text } from "@radix-ui/themes";
+import InteractionForm from "@/components/InteractionForm";
 
 export default function InteractionPage() {
   return (
-    <div className="space-y-6">
-      <Heading size="6" className="text-center">
-        Interaction Tracking
-      </Heading>
-
-      <Card size="3">
-        <div className="space-y-4">
-          <Text as="div">
-            This is the Interaction page where volunteers can track interactions
-            that occur.
-          </Text>
-          <Text as="div" color="gray">
-            Interaction tracking components and functionality will be
-            implemented here.
-          </Text>
-        </div>
-      </Card>
+    <div className="p-6">
+      <InteractionForm />
     </div>
   );
 }
