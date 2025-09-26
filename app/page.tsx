@@ -19,8 +19,8 @@ export default async function Home() {
     .toUpperCase();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <h1 className="font-bold text-center text-6xl">Hello World</h1>
+    <div className="flex flex-col items-center justify-center">
+      <h1 className="font-bold text-center text-6xl">HKL Tracking App</h1>
 
       <div className="text-center mt-4">
         {user ? (

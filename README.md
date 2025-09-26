@@ -1,6 +1,4 @@
-# hkl-tracker — local setup
-
-A small Next.js app using Supabase for authentication.
+# HKL Interaction Tracking App
 
 ## Quick start
 1. Install dependencies:

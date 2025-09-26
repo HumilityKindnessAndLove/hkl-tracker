@@ -12,7 +12,12 @@ export default function SignOutButton() {
   };
 
   return (
-    <Button onClick={handleSignOut} size="3" variant="ghost">
+    <Button
+      onClick={handleSignOut}
+      size="3"
+      variant="ghost"
+      style={{ cursor: "pointer" }} // added to show clickable cursor
+    >
       Sign out
     </Button>
   );
