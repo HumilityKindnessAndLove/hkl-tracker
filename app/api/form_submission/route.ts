@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createBrevoContact } from "@/lib/brevo";
 import { createClient } from "@/lib/supabase/server";
 import { validateFormSubmission } from "@/lib/validators";
 
@@ -28,6 +29,19 @@ export async function POST(request: Request) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Attempt to create contact in Brevo if email is provided
+    if (parsed.email) {
+      // Run Brevo contact creation in background (we're not awaiting response)
+      createBrevoContact(parsed.email, parsed.f_name, parsed.l_name, {
+        STATE: parsed.region,
+        COUNTRY: parsed.country,
+        SMS: parsed.phone,
+        SOURCE: parsed.source,
+      }).catch((error) => {
+        console.error("Background Brevo contact creation failed:", error);
+      });
     }
 
     return NextResponse.json({ data }, { status: 201 });
