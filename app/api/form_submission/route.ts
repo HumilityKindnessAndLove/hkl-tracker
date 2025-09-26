@@ -32,16 +32,49 @@ export async function POST(request: Request) {
     }
 
     // Attempt to create contact in Brevo if email is provided
-    if (parsed.email) {
-      // Run Brevo contact creation in background (we're not awaiting response)
-      createBrevoContact(parsed.email, parsed.f_name, parsed.l_name, {
-        STATE: parsed.region,
-        COUNTRY: parsed.country,
-        SMS: parsed.phone,
-        SOURCE: parsed.source,
-      }).catch((error) => {
-        console.error("Background Brevo contact creation failed:", error);
-      });
+    if (parsed.email && data?.id) {
+      try {
+        const brevoResult = await createBrevoContact(
+          parsed.email,
+          parsed.f_name,
+          parsed.l_name,
+          {
+            STATE: parsed.region,
+            COUNTRY: parsed.country,
+            SMS: parsed.phone,
+            SOURCE: parsed.source,
+          },
+        );
+
+        // Update the form submission with Brevo result
+        const { error: updateError } = await supabase
+          .from("form_submissions")
+          .update({
+            brevo_status: brevoResult.brevo_status,
+            brevo_sent_at: brevoResult.brevo_sent_at,
+            brevo_error: brevoResult.brevo_error,
+            brevo_id: brevoResult.brevo_id,
+          })
+          .eq("id", data.id);
+
+        if (updateError) {
+          console.error(
+            "Failed to update form submission with Brevo data:",
+            updateError,
+          );
+        }
+      } catch (error) {
+        console.error("Brevo integration failed:", error);
+        // Update with error status
+        await supabase
+          .from("form_submissions")
+          .update({
+            brevo_status: "error",
+            brevo_error: error instanceof Error ? error.message : String(error),
+            brevo_sent_at: new Date().toISOString(),
+          })
+          .eq("id", data.id);
+      }
     }
 
     return NextResponse.json({ data }, { status: 201 });

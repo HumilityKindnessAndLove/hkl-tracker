@@ -88,6 +88,7 @@ export type Database = {
       form_submissions: {
         Row: {
           brevo_error: string | null;
+          brevo_id: number | null;
           brevo_sent_at: string | null;
           brevo_status: string | null;
           country: string | null;
@@ -106,6 +107,7 @@ export type Database = {
         };
         Insert: {
           brevo_error?: string | null;
+          brevo_id?: number | null;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           country?: string | null;
@@ -124,6 +126,7 @@ export type Database = {
         };
         Update: {
           brevo_error?: string | null;
+          brevo_id?: number | null;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           country?: string | null;
