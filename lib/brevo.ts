@@ -104,8 +104,8 @@ export async function createBrevoContact(
       contactData.listIds = finalListIds;
     }
 
-    // Set up timeout (default 10 seconds, configurable via env var)
-    const timeoutMs = parseInt(process.env.BREVO_TIMEOUT_MS || "10000", 10);
+    // Set up timeout 10s hardcoded for now
+    const timeoutMs = 10000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
