@@ -1,83 +1,28 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
-import {Box, Button, Flex, Heading, Select, TextField, Text,} from "@radix-ui/themes";
-import * as Toast from "@radix-ui/react-toast";
+import {Box, Button, Flex, Heading, Select, TextField, Text, Card, TextArea, Checkbox, RadioGroup,} from "@radix-ui/themes";
 import Form from "next/form";
 
-const supabase = createClient();
+
 
 export default function InteractionForm() {
-  const [events, setEvents] = useState<{ id: string; title: string }[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState("");
-
-  // Toast state
-  const [open, setOpen] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
-  const [toastVariant, setToastVariant] = useState<"success" | "error">("success");
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      const { data, error } = await supabase.from("events").select("id, title");
-      if (!error && data) setEvents(data);
-    };
-    fetchEvents();
-  }, []);
-
-  const showToast = (msg: string, variant: "success" | "error") => {
-    setToastMsg(msg);
-    setToastVariant(variant);
-    setOpen(false); 
-    setTimeout(() => setOpen(true), 50);
-  };
-
-  const handleSubmit = async (formData: FormData) => {
-    setLoading(true);
-
-    const payload = {
-      name: formData.get("name"),
-      type: selectedType,
-      notes: formData.get("notes"),
-      event_id: selectedEvent || null,
-    };
-
-    const { error } = await supabase.from("interactions").insert(payload);
-
-    if (error) {
-      console.error("Failed to save:", error);
-      showToast("❌ Failed to save interaction", "error");
-    } else {
-      showToast("✅ Interaction saved!", "success");
-      setSelectedType("");
-      setSelectedEvent("");
-    }
-
-    setLoading(false);
-  };
+  const [selectedType, setSelectedType] = useState("signup");
+  const [selectedEvent, setSelectedEvent] = useState("none");
 
   return (
-    <Toast.Provider>
-      <Box
-        maxWidth="400px"
-        mx="auto"
-        my="6"
-        p="4"
-        style={{
-          border: "1px solid var(--gray-6)",
-          borderRadius: "var(--radius-3)",
-        }}
-      >
-        <Heading as="h2" size="5" mb="4" align="center">
-          Add Interaction
-        </Heading>
+    <Box maxWidth="400px" mx="auto" my="6">
+    <Card size="3" variant="surface">
+    <Heading as="h2" size="5" mb="4" align="center">
+      Add Interaction
+    </Heading>
+  
+    
 
-        <Form action={handleSubmit}>
-          <Flex direction="column" gap="3">
+        <Form action = {()=>{}}>
+          <Flex direction="column" gap="4">
             {/* Name */}
-            <Flex direction="column" gap="1">
+            <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
                 Name <span style={{ color: "red" }}>*</span>
               </Text>
@@ -85,39 +30,59 @@ export default function InteractionForm() {
             </Flex>
 
             {/* Type of Interaction */}
-            <Flex direction="column" gap="1">
+            <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
-                Type of Interaction <span style={{ color: "red" }}>*</span>
+                Type of Interaction 
               </Text>
-              <Select.Root
-                value={selectedType}
-                onValueChange={setSelectedType}
-                required
-              >
-                <Select.Trigger placeholder="Select type" />
-                <Select.Content>
-                  <Select.Item value="conversation">Conversation</Select.Item>
-                  <Select.Item value="signup">Signup</Select.Item>
-                  <Select.Item value="rejection">Rejection</Select.Item>
-                </Select.Content>
-              </Select.Root>
+              <Flex gap="2" justify="center" wrap="wrap">
+                    {["conversation", "signup", "rejection"].map((type) => (
+                    <Button
+                        key={type}
+                        type="button"
+                        variant={selectedType === type ? "solid" : "outline"}
+                        color={selectedType === type ? "blue" : "gray"}
+                        onClick={() => setSelectedType(type)}
+                    >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Button>
+                    ))}
+                </Flex>
+            </Flex>
+
+            {/* Friendly or Unfriendly */}
+            <Flex direction="column" gap="2">
+            <Text as="label" size="2" weight="medium">
+                How was the interaction? 
+            </Text>
+            <RadioGroup.Root name="friendliness" defaultValue="friendly" required>
+                <Flex gap="5" align="center">
+                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <RadioGroup.Item value="friendly" />
+                    <Text size="2">Friendly</Text>
+                </label>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <RadioGroup.Item value="unfriendly" />
+                    <Text size="2">Unfriendly</Text>
+                </label>
+                </Flex>
+            </RadioGroup.Root>
             </Flex>
 
             {/* Notes */}
-            <Flex direction="column" gap="1">
+            <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
                 Additional Notes
               </Text>
-              <TextField.Root
+              <TextArea
                 name="notes"
                 placeholder="Additional notes (optional)"
               />
             </Flex>
 
-            {/* Event (optional) */}
-            <Flex direction="column" gap="1">
+            {/* Event */}
+            <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
-                Event (optional)
+                Event
               </Text>
               <Select.Root
                 value={selectedEvent}
@@ -125,46 +90,19 @@ export default function InteractionForm() {
               >
                 <Select.Trigger placeholder="Attach event" />
                 <Select.Content>
-                  {events.map((e) => (
-                    <Select.Item key={e.id} value={e.id}>
-                      {e.title}
-                    </Select.Item>
-                  ))}
+                    <Select.Item value="none">None</Select.Item>
+                    <Select.Item value="Darbar Sahib">Darbar Sahib</Select.Item>
                 </Select.Content>
               </Select.Root>
             </Flex>
 
             {/* Submit */}
-            <Button type="submit" disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
-            </Button>
+            <Button type="submit">Submit</Button>
           </Flex>
         </Form>
+        </Card>
       </Box>
-
-      {/* Toast */}
-      <Toast.Root
-        open={open}
-        onOpenChange={setOpen}
-        duration={3000}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "12px 16px",
-          borderRadius: "var(--radius-2)",
-          boxShadow: "var(--shadow-4)",
-          color: "white",
-          fontSize: "var(--font-size-1)",
-          fontWeight: "500",
-          backgroundColor:
-            toastVariant === "success" ? "var(--green-9)" : "var(--red-9)",
-        }}
-      >
-        <Toast.Title>{toastMsg}</Toast.Title>
-      </Toast.Root>
-      <Toast.Viewport />
-    </Toast.Provider>
-  );
+    );
 }
+
+
