@@ -26,7 +26,19 @@ export const interactionSchema = z.object({
   volunteer_id: z.string().nullable().optional(),
 });
 
+export const eventSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().nullable().optional(),
+  starts_at: z.string().nullable().optional(),
+  ends_at: z.string().nullable().optional(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+  created_by: z.string().nullable().optional(),
+});
+
 export const validateFormSubmission = (data: unknown) =>
   formSubmissionSchema.parse(data);
 export const validateInteraction = (data: unknown) =>
   interactionSchema.parse(data);
+export const validateEvent = (data: unknown) => eventSchema.parse(data);
