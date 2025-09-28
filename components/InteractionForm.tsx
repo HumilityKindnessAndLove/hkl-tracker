@@ -1,25 +1,34 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {Box, Button, Flex, Heading, Select, TextField, Text, Card, TextArea, Checkbox, RadioGroup,} from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  RadioGroup,
+  Select,
+  Text,
+  TextArea,
+  TextField,
+} from "@radix-ui/themes";
 import Form from "next/form";
-
-
+import React from "react";
 
 export default function InteractionForm() {
-  const [selectedType, setSelectedType] = useState("signup");
-  const [selectedEvent, setSelectedEvent] = useState("none");
+  const [selectedType, setSelectedType] = React.useState("signup");
+  const [selectedEvent, setSelectedEvent] = React.useState("none");
+  const [selectedFriendliness, setSelectedFriendliness] =
+    React.useState("friendly");
 
   return (
     <Box maxWidth="400px" mx="auto" my="6">
-    <Card size="3" variant="surface">
-    <Heading as="h2" size="5" mb="4" align="center">
-      Add Interaction
-    </Heading>
-  
-    
+      <Card size="3" variant="surface">
+        <Heading as="h2" size="5" mb="4" align="center">
+          Add Interaction
+        </Heading>
 
-        <Form action = {()=>{}}>
+        <Form action={() => {}}>
           <Flex direction="column" gap="4">
             {/* Name */}
             <Flex direction="column" gap="2">
@@ -32,40 +41,71 @@ export default function InteractionForm() {
             {/* Type of Interaction */}
             <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
-                Type of Interaction 
+                Type of Interaction
               </Text>
               <Flex gap="2" justify="center" wrap="wrap">
-                    {["conversation", "signup", "rejection"].map((type) => (
-                    <Button
-                        key={type}
-                        type="button"
-                        variant={selectedType === type ? "solid" : "outline"}
-                        color={selectedType === type ? "blue" : "gray"}
-                        onClick={() => setSelectedType(type)}
-                    >
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </Button>
-                    ))}
-                </Flex>
+                {["conversation", "signup", "rejection"].map((type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={selectedType === type ? "solid" : "outline"}
+                    {...(selectedType !== type
+                      ? { color: "gray" as const }
+                      : {})}
+                    onClick={() => setSelectedType(type)}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </Button>
+                ))}
+              </Flex>
             </Flex>
 
             {/* Friendly or Unfriendly */}
             <Flex direction="column" gap="2">
-            <Text as="label" size="2" weight="medium">
-                How was the interaction? 
-            </Text>
-            <RadioGroup.Root name="friendliness" defaultValue="friendly" required>
-                <Flex gap="5" align="center">
-                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <RadioGroup.Item value="friendly" />
-                    <Text size="2">Friendly</Text>
-                </label>
-                <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Text as="label" size="2" weight="medium">
+                How was the interaction? (Button)
+              </Text>
+              <Flex gap="2" justify="center" wrap="wrap">
+                {["friendly", "unfriendly"].map((type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={
+                      selectedFriendliness === type ? "solid" : "outline"
+                    }
+                    {...(selectedFriendliness !== type
+                      ? { color: "gray" as const }
+                      : {})}
+                    onClick={() => setSelectedFriendliness(type)}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </Button>
+                ))}
+              </Flex>
+            </Flex>
+
+            <Flex direction="column" gap="2">
+              <Text as="label" size="2" weight="medium">
+                How was the interaction? (Radio)
+              </Text>
+              <RadioGroup.Root
+                name="friendliness"
+                value={selectedFriendliness}
+                onValueChange={setSelectedFriendliness}
+                required
+              >
+                <Text as="label" size="2">
+                  <Flex gap="2" align="center">
+                    <RadioGroup.Item value="friendly" /> Friendly
+                  </Flex>
+                </Text>
+                <Text as="label" size="2">
+                  <Flex gap="2" align="center">
                     <RadioGroup.Item value="unfriendly" />
-                    <Text size="2">Unfriendly</Text>
-                </label>
-                </Flex>
-            </RadioGroup.Root>
+                    Unfriendly
+                  </Flex>
+                </Text>
+              </RadioGroup.Root>
             </Flex>
 
             {/* Notes */}
@@ -90,8 +130,8 @@ export default function InteractionForm() {
               >
                 <Select.Trigger placeholder="Attach event" />
                 <Select.Content>
-                    <Select.Item value="none">None</Select.Item>
-                    <Select.Item value="Darbar Sahib">Darbar Sahib</Select.Item>
+                  <Select.Item value="none">None</Select.Item>
+                  <Select.Item value="Darbar Sahib">Darbar Sahib</Select.Item>
                 </Select.Content>
               </Select.Root>
             </Flex>
@@ -100,9 +140,7 @@ export default function InteractionForm() {
             <Button type="submit">Submit</Button>
           </Flex>
         </Form>
-        </Card>
-      </Box>
-    );
+      </Card>
+    </Box>
+  );
 }
-
-
