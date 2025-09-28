@@ -2,6 +2,10 @@
 
 .radix-themes {
   --default-font-family: var(--font-ubuntu);
+  --cursor-button: pointer;
+  --cursor-radio: pointer;
+  --cursor-checkbox: pointer;
+  --cursor-menu-item: pointer;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
