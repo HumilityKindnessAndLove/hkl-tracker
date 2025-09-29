@@ -40,16 +40,17 @@ async function trackQRVisit(qrLinkId: string, request: Request) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
 
     // Fetch the QR link record by id
     const { data: qrLink, error } = await supabase
       .from("qr_links")
       .select("volunteer_id, active, expires_at")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error || !qrLink) {
@@ -72,7 +73,7 @@ export async function GET(
     const redirectResponse = Response.redirect(redirectUrl, 302);
 
     // Track the visit asynchronously
-    trackQRVisit(params.id, request).catch((error) => {
+    trackQRVisit(id, request).catch((error) => {
       console.error("Background QR visit tracking failed:", error);
     });
 
