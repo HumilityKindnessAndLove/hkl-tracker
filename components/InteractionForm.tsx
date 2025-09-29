@@ -33,9 +33,13 @@ export default function InteractionForm() {
             {/* Name */}
             <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
-                Name <span style={{ color: "red" }}>*</span>
+                Pledge Name <span style={{ color: "red" }}>*</span>
               </Text>
-              <TextField.Root name="name" placeholder="Enter name" required />
+              <TextField.Root
+                name="name"
+                placeholder="Enter Pledge Name"
+                required
+              />
             </Flex>
 
             {/* Type of Interaction */}
