@@ -307,6 +307,38 @@ export type Database = {
           },
         ];
       };
+      qr_visits: {
+        Row: {
+          id: number;
+          ip: unknown | null;
+          qr_link_id: number | null;
+          user_agent: string | null;
+          visited_at: string;
+        };
+        Insert: {
+          id?: number;
+          ip?: unknown | null;
+          qr_link_id?: number | null;
+          user_agent?: string | null;
+          visited_at?: string;
+        };
+        Update: {
+          id?: number;
+          ip?: unknown | null;
+          qr_link_id?: number | null;
+          user_agent?: string | null;
+          visited_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "qr_visits_qr_link_id_fkey";
+            columns: ["qr_link_id"];
+            isOneToOne: false;
+            referencedRelation: "qr_links";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       roles: {
         Row: {
           id: string;
