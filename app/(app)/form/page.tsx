@@ -56,8 +56,11 @@ export default function FormPage() {
           >
             Country <span className="text-red-500">*</span>
           </Label.Root>
-          <Select.Root defaultValue="Canada">
-            <Select.Trigger placeholder="Select a country" />
+          <Select.Root>
+            <Select.Trigger
+              placeholder="Attach event"
+              style={{ width: "100%" }}
+            />
             <Select.Content>
               {countryList.map((country) => (
                 <Select.Item key={country.value} value={country.value}>
@@ -78,7 +81,8 @@ export default function FormPage() {
           <TextField.Root
             type="text"
             id="city"
-            required        
+            placeholder="Enter your City"
+            required
           />
         </div>
 
@@ -89,18 +93,22 @@ export default function FormPage() {
           >
             Language
           </Label.Root>
-          <Select.Root defaultValue="English">
-            <Select.Trigger placeholder="Select One" />
+          <Select.Root>
+            <Select.Trigger
+              placeholder="Select One "
+              style={{ width: "100%" }}
+            />
+
             <Select.Content>
               <Select.Item value="English">English</Select.Item>
-              <Select.Item value="Bulgarian">Punjabi</Select.Item>
-              <Select.Item value="French">Hindi</Select.Item>
+              <Select.Item value="Bulgarian">Bulgarian</Select.Item>
+              <Select.Item value="French">French</Select.Item>
               <Select.Item value="German">German</Select.Item>
               <Select.Item value="Italian">Italian</Select.Item>
-              <Select.Item value="Lithuanian">Japanese</Select.Item>
-              <Select.Item value="Punjabi">Korean</Select.Item>
-              <Select.Item value="Polish">Vietnamese</Select.Item>
-              <Select.Item value="Malay">Tagalog</Select.Item>
+              <Select.Item value="Lithuanian">Lithuanian</Select.Item>
+              <Select.Item value="Punjabi">Punjabi</Select.Item>
+              <Select.Item value="Polish">Polish</Select.Item>
+              <Select.Item value="Malay">Malay</Select.Item>
               <Select.Item value="Russian">Russian</Select.Item>
               <Select.Item value="Spanish">Spanish</Select.Item>
             </Select.Content>
