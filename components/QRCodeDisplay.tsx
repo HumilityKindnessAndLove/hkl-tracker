@@ -64,8 +64,6 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
     if (qrUrl) {
       try {
         await navigator.clipboard.writeText(qrUrl);
-        // You could add a toast notification here
-        alert("QR URL copied to clipboard!");
       } catch (err) {
         console.error("Failed to copy to clipboard:", err);
       }
@@ -107,7 +105,7 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
         {qrCodeDataUrl && (
           <div className="border border-gray-200 rounded-lg">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* biome-ignore lint/performance/noImgElement: QR code is a data URL, not a regular image */}
             <img src={qrCodeDataUrl} alt="QR Code" width={size} height={size} />
           </div>
         )}
