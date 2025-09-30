@@ -48,9 +48,7 @@ function getDefaultBrevoListIds(): number[] | null {
 
 export async function createBrevoContact(
   email: string,
-  firstName?: string | null,
-  lastName?: string | null,
-  additionalAttributes?: Record<string, unknown>,
+  attributes: Record<string, unknown>,
   listIds?: number[],
 ): Promise<BrevoResult> {
   const apiKey = process.env.BREVO_API_KEY;
@@ -80,20 +78,7 @@ export async function createBrevoContact(
       updateEnabled: true, // TODO: confirm if this is desired behavior
     };
 
-    // Add names and other attributes
-    const attributes: Record<string, unknown> = {
-      ...additionalAttributes,
-    };
-
-    if (firstName) {
-      attributes.FIRSTNAME = firstName;
-    }
-    if (lastName) {
-      attributes.LASTNAME = lastName;
-    }
-
-    // Set attributes if we have any
-    if (Object.keys(attributes).length > 0) {
+    if (attributes && Object.keys(attributes).length > 0) {
       contactData.attributes = attributes;
     }
 

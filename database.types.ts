@@ -91,57 +91,60 @@ export type Database = {
           brevo_id: number | null;
           brevo_sent_at: string | null;
           brevo_status: string | null;
+          city: string | null;
           country: string | null;
           email: string | null;
           f_name: string | null;
           id: string;
-          l_name: string | null;
           location_id: string | null;
           payload: Json | null;
-          phone: string | null;
           qr_token: string | null;
-          region: string | null;
+          sms: string | null;
+          sms_country_code: string | null;
           source: string | null;
           submitted_at: string | null;
           volunteer_id: string | null;
+          your_preferred_language: number | null;
         };
         Insert: {
           brevo_error?: string | null;
           brevo_id?: number | null;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
+          city?: string | null;
           country?: string | null;
           email?: string | null;
           f_name?: string | null;
           id?: string;
-          l_name?: string | null;
           location_id?: string | null;
           payload?: Json | null;
-          phone?: string | null;
           qr_token?: string | null;
-          region?: string | null;
+          sms?: string | null;
+          sms_country_code?: string | null;
           source?: string | null;
           submitted_at?: string | null;
           volunteer_id?: string | null;
+          your_preferred_language?: number | null;
         };
         Update: {
           brevo_error?: string | null;
           brevo_id?: number | null;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
+          city?: string | null;
           country?: string | null;
           email?: string | null;
           f_name?: string | null;
           id?: string;
-          l_name?: string | null;
           location_id?: string | null;
           payload?: Json | null;
-          phone?: string | null;
           qr_token?: string | null;
-          region?: string | null;
+          sms?: string | null;
+          sms_country_code?: string | null;
           source?: string | null;
           submitted_at?: string | null;
           volunteer_id?: string | null;
+          your_preferred_language?: number | null;
         };
         Relationships: [
           {
@@ -272,32 +275,32 @@ export type Database = {
         };
         Relationships: [];
       };
-      qr_tokens: {
+      qr_links: {
         Row: {
           active: boolean;
-          created_at: string | null;
+          created_at: string;
           expires_at: string | null;
-          token: string;
-          user_id: string;
+          id: number;
+          volunteer_id: string | null;
         };
         Insert: {
-          active?: boolean;
-          created_at?: string | null;
+          active: boolean;
+          created_at?: string;
           expires_at?: string | null;
-          token: string;
-          user_id: string;
+          id?: number;
+          volunteer_id?: string | null;
         };
         Update: {
           active?: boolean;
-          created_at?: string | null;
+          created_at?: string;
           expires_at?: string | null;
-          token?: string;
-          user_id?: string;
+          id?: number;
+          volunteer_id?: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "qr_tokens_user_id_fkey";
-            columns: ["user_id"];
+            foreignKeyName: "qr_links_volunteer_id_fkey";
+            columns: ["volunteer_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -308,34 +311,31 @@ export type Database = {
         Row: {
           id: number;
           ip: unknown | null;
-          referer: string | null;
-          token: string | null;
+          qr_link_id: number | null;
           user_agent: string | null;
-          visited_at: string | null;
+          visited_at: string;
         };
         Insert: {
           id?: number;
           ip?: unknown | null;
-          referer?: string | null;
-          token?: string | null;
+          qr_link_id?: number | null;
           user_agent?: string | null;
-          visited_at?: string | null;
+          visited_at?: string;
         };
         Update: {
           id?: number;
           ip?: unknown | null;
-          referer?: string | null;
-          token?: string | null;
+          qr_link_id?: number | null;
           user_agent?: string | null;
-          visited_at?: string | null;
+          visited_at?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "qr_visits_token_fkey";
-            columns: ["token"];
+            foreignKeyName: "qr_visits_qr_link_id_fkey";
+            columns: ["qr_link_id"];
             isOneToOne: false;
-            referencedRelation: "qr_tokens";
-            referencedColumns: ["token"];
+            referencedRelation: "qr_links";
+            referencedColumns: ["id"];
           },
         ];
       };

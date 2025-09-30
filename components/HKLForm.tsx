@@ -28,17 +28,17 @@ export default function HKLForm() {
   );
 
   const languages = [
-    "English",
-    "Bulgarian",
-    "French",
-    "German",
-    "Italian",
-    "Lithuanian",
-    "Punjabi",
-    "Polish",
-    "Malay",
-    "Russian",
-    "Spanish",
+    { value: 1, label: "English" },
+    { value: 2, label: "Bulgarian" },
+    { value: 3, label: "French" },
+    { value: 4, label: "German" },
+    { value: 5, label: "Italian" },
+    { value: 6, label: "Lithuanian" },
+    { value: 7, label: "Punjabi" },
+    { value: 8, label: "Polish" },
+    { value: 9, label: "Malay" },
+    { value: 10, label: "Russian" },
+    { value: 11, label: "Spanish" },
   ];
 
   return (
@@ -122,8 +122,11 @@ export default function HKLForm() {
                 <Select.Trigger placeholder="Select Language" />
                 <Select.Content>
                   {languages.map((language) => (
-                    <Select.Item key={language} value={language}>
-                      {language}
+                    <Select.Item
+                      key={language.value}
+                      value={language.value.toString()}
+                    >
+                      {language.label}
                     </Select.Item>
                   ))}
                 </Select.Content>
