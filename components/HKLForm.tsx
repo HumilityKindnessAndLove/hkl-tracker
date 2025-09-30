@@ -11,18 +11,62 @@ import {
   TextField,
 } from "@radix-ui/themes";
 import { countries } from "countries-list";
+import {
+  type PhoneNumber,
+  PhoneNumberFormat,
+  PhoneNumberUtil,
+} from "google-libphonenumber";
 import Form from "next/form";
 import React, { useMemo } from "react";
 
 export default function HKLForm() {
   const [selectedCountry, setSelectedCountry] = React.useState("");
   const [selectedLanguage, setSelectedLanguage] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [phoneError, setPhoneError] = React.useState("");
+  const [detectedCountryCode, setDetectedCountryCode] = React.useState("");
+  const [userCountryCode, setUserCountryCode] = React.useState(""); // No default fallback
+
+  const phoneUtil = PhoneNumberUtil.getInstance();
+
+  // Detect user's country from IP on component mount
+  React.useEffect(() => {
+    const detectUserCountry = async () => {
+      try {
+        // Use ip-api.com directly for geolocation
+        const response = await fetch(
+          "http://ip-api.com/json/?fields=status,countryCode",
+        );
+
+        if (!response.ok) {
+          throw new Error(`IP API responded with status: ${response.status}`);
+        }
+
+        const geo = await response.json();
+
+        if (geo.status === "success" && geo.countryCode) {
+          setUserCountryCode(geo.countryCode);
+          console.log("Detected user country code:", geo.countryCode);
+        } else {
+          // No fallback - leave empty if no country detected
+          setUserCountryCode("");
+        }
+      } catch (error) {
+        console.log("Failed to detect user country:", error);
+        // No fallback - leave empty if detection fails
+        setUserCountryCode("");
+      }
+    };
+
+    detectUserCountry();
+  }, []);
 
   const countryList = useMemo(
     () =>
       Object.values(countries).map((country) => ({
         value: country.name,
         label: country.name,
+        code: country.phone[0],
       })),
     [],
   );
@@ -41,6 +85,225 @@ export default function HKLForm() {
     { value: 11, label: "Spanish" },
   ];
 
+  const validateAndFormatPhone = (
+    phoneNumber: string,
+    countryName: string,
+    detectedCountryCode: string = "",
+  ): {
+    isValid: boolean;
+    formatted: string | null;
+    error: string;
+    countryCode: string;
+  } => {
+    if (!phoneNumber) {
+      return { isValid: true, formatted: null, error: "", countryCode: "" };
+    }
+
+    try {
+      let parsedNumber: PhoneNumber;
+      let detectedCode = "";
+
+      // First try to parse with selected country as default
+      if (countryName) {
+        const country = Object.entries(countries).find(
+          ([, countryData]) => countryData.name === countryName,
+        );
+        if (country) {
+          const countryCode = country[0];
+
+          try {
+            parsedNumber = phoneUtil.parseAndKeepRawInput(
+              phoneNumber,
+              countryCode,
+            );
+            if (phoneUtil.isValidNumber(parsedNumber)) {
+              detectedCode = `+${parsedNumber.getCountryCode()}`;
+              const formatted = phoneUtil.format(
+                parsedNumber,
+                PhoneNumberFormat.E164,
+              );
+              return {
+                isValid: true,
+                formatted,
+                error: "",
+                countryCode: detectedCode,
+              };
+            }
+          } catch {}
+        }
+      }
+
+      // If that fails or no country selected, try parsing with unknown region (for numbers with explicit country codes)
+      try {
+        parsedNumber = phoneUtil.parseAndKeepRawInput(phoneNumber, "ZZ");
+        if (phoneUtil.isValidNumber(parsedNumber)) {
+          detectedCode = `+${parsedNumber.getCountryCode()}`;
+          const formatted = phoneUtil.format(
+            parsedNumber,
+            PhoneNumberFormat.E164,
+          );
+          return {
+            isValid: true,
+            formatted,
+            error: "",
+            countryCode: detectedCode,
+          };
+        }
+      } catch {}
+
+      // If we have a detected country from IP, try that as final attempt
+      if (detectedCountryCode) {
+        try {
+          parsedNumber = phoneUtil.parseAndKeepRawInput(
+            phoneNumber,
+            detectedCountryCode,
+          );
+          if (phoneUtil.isValidNumber(parsedNumber)) {
+            detectedCode = `+${parsedNumber.getCountryCode()}`;
+            const formatted = phoneUtil.format(
+              parsedNumber,
+              PhoneNumberFormat.E164,
+            );
+            return {
+              isValid: true,
+              formatted,
+              error: "",
+              countryCode: detectedCode,
+            };
+          }
+        } catch {}
+      }
+
+      // No fallback - return invalid if all attempts failed
+
+      return {
+        isValid: false,
+        formatted: null,
+        error: "Invalid phone number format",
+        countryCode: "",
+      };
+    } catch {
+      return {
+        isValid: false,
+        formatted: null,
+        error: "Invalid phone number format",
+        countryCode: "",
+      };
+    }
+  };
+
+  const handlePhoneChange = (value: string) => {
+    const validation = validateAndFormatPhone(
+      value,
+      selectedCountry,
+      userCountryCode,
+    );
+    if (validation.countryCode) {
+      setDetectedCountryCode(validation.countryCode);
+    } else if (selectedCountry) {
+      // Show default country code from selected country
+      const country = Object.entries(countries).find(
+        ([, countryData]) => countryData.name === selectedCountry,
+      );
+      if (country) {
+        setDetectedCountryCode(`+${country[1].phone[0]}`);
+      }
+    } else {
+      setDetectedCountryCode("");
+    }
+
+    if (validation.error && value) {
+      setPhoneError(validation.error);
+    } else {
+      setPhoneError("");
+    }
+  };
+
+  // Update country code when country selection changes
+  React.useEffect(() => {
+    if (selectedCountry) {
+      const country = Object.entries(countries).find(
+        ([, countryData]) => countryData.name === selectedCountry,
+      );
+      if (country) {
+        setDetectedCountryCode(`+${country[1].phone[0]}`);
+      }
+    } else {
+      setDetectedCountryCode("");
+    }
+  }, [selectedCountry]);
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsSubmitting(true);
+    setPhoneError("");
+
+    try {
+      const phoneNumber = formData.get("phone")?.toString() || "";
+
+      // Validate and format phone number if provided
+      const phoneValidation = validateAndFormatPhone(
+        phoneNumber,
+        selectedCountry,
+        userCountryCode,
+      );
+
+      if (!phoneValidation.isValid && phoneNumber) {
+        setPhoneError(phoneValidation.error);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Update detected country code for display
+      if (phoneValidation.countryCode) {
+        setDetectedCountryCode(phoneValidation.countryCode);
+      }
+
+      const payload = {
+        f_name: formData.get("name"),
+        email: formData.get("email"),
+        country: selectedCountry || null,
+        city: formData.get("city"),
+        your_preferred_language: selectedLanguage
+          ? parseInt(selectedLanguage, 10)
+          : null,
+        sms: phoneValidation.formatted, // Use formatted phone number
+        submitted_at: new Date().toISOString(),
+      };
+
+      const response = await fetch("/api/form_submission", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit form");
+      }
+
+      const result = await response.json();
+      console.log("Form submitted successfully:", result);
+
+      // Reset form on success
+      setSelectedCountry("");
+      setSelectedLanguage("");
+      setPhoneError("");
+
+      // Reset form fields
+      const form = document.querySelector("form") as HTMLFormElement;
+      if (form) form.reset();
+
+      alert("Form submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(error instanceof Error ? error.message : "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Box maxWidth="400px" mx="auto" my="6">
       <Card size="3" variant="surface">
@@ -48,7 +311,7 @@ export default function HKLForm() {
           HKL Pledge Form
         </Heading>
 
-        <Form action={() => {}}>
+        <Form action={handleSubmit}>
           <Flex direction="column" gap="4">
             {/* Pledge Name */}
             <Flex direction="column" gap="2">
@@ -80,6 +343,7 @@ export default function HKLForm() {
               <Text as="label" size="2" weight="medium">
                 Country <span style={{ color: "red" }}>*</span>
               </Text>
+              <input type="hidden" name="country" value={selectedCountry} />
               <Select.Root
                 name="country"
                 value={selectedCountry}
@@ -114,6 +378,7 @@ export default function HKLForm() {
               <Text as="label" size="2" weight="medium">
                 Preferred Language
               </Text>
+              <input type="hidden" name="language" value={selectedLanguage} />
               <Select.Root
                 name="language"
                 value={selectedLanguage}
@@ -142,12 +407,34 @@ export default function HKLForm() {
                 name="phone"
                 type="tel"
                 placeholder="Enter your Phone Number"
-              />
+                onChange={(e) => handlePhoneChange(e.target.value)}
+              >
+                {detectedCountryCode && (
+                  <TextField.Slot side="left">
+                    <Text size="2" color="gray">
+                      {detectedCountryCode}
+                    </Text>
+                  </TextField.Slot>
+                )}
+              </TextField.Root>
+              <Text size="1" color="gray">
+                Enter phone number (country code will be detected automatically)
+              </Text>
+              {phoneError && (
+                <Text size="1" color="red">
+                  {phoneError}
+                </Text>
+              )}
             </Flex>
 
             {/* Submit Button */}
-            <Button type="submit" size="3" variant="solid">
-              Submit
+            <Button
+              type="submit"
+              size="3"
+              variant="solid"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </Flex>
         </Form>
