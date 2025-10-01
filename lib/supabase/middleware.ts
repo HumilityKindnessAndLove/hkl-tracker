@@ -57,6 +57,7 @@ export async function updateSession(request: NextRequest) {
   const accept = request.headers.get("accept") ?? "";
   if (
     request.nextUrl.pathname.startsWith("/api") ||
+    request.nextUrl.pathname.startsWith("/v/") ||
     accept.includes("application/json") ||
     request.nextUrl.pathname.startsWith("/_next") ||
     // static files (has extension)
