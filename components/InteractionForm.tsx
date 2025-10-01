@@ -20,6 +20,56 @@ export default function InteractionForm() {
   const [selectedEvent, setSelectedEvent] = React.useState("none");
   const [selectedFriendliness, setSelectedFriendliness] =
     React.useState("friendly");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsSubmitting(true);
+
+    try {
+      const payload = {
+        contact_name: formData.get("name"),
+        outcome: selectedType,
+        friendly: selectedFriendliness === "friendly",
+        notes: formData.get("notes") || null,
+        // TODO: event_id: selectedEvent === "none" ? null : selectedEvent,
+        date: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
+      };
+
+      const response = await fetch("/api/interactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit interaction");
+      }
+
+      const result = await response.json();
+      console.log("Interaction submitted successfully:", result);
+
+      // Reset form on success
+      setSelectedType("signup");
+      setSelectedEvent("none");
+      setSelectedFriendliness("friendly");
+
+      // Reset form fields
+      const form = document.querySelector("form") as HTMLFormElement;
+      if (form) form.reset();
+
+      alert("Interaction submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting interaction:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to submit interaction",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Box maxWidth="400px" mx="auto" my="6">
@@ -28,7 +78,7 @@ export default function InteractionForm() {
           Add Interaction
         </Heading>
 
-        <Form action={() => {}}>
+        <Form action={handleSubmit}>
           <Flex direction="column" gap="4">
             {/* Name */}
             <Flex direction="column" gap="2">
@@ -47,6 +97,7 @@ export default function InteractionForm() {
               <Text as="label" size="2" weight="medium">
                 Type of Interaction
               </Text>
+              <input type="hidden" name="outcome" value={selectedType} />
               <Flex gap="2" justify="center" wrap="wrap">
                 {["conversation", "signup", "rejection"].map((type) => (
                   <Button
@@ -69,6 +120,11 @@ export default function InteractionForm() {
               <Text as="label" size="2" weight="medium">
                 How was the interaction? (Button)
               </Text>
+              <input
+                type="hidden"
+                name="friendly"
+                value={selectedFriendliness}
+              />
               <Flex gap="2" justify="center" wrap="wrap">
                 {["friendly", "unfriendly"].map((type) => (
                   <Button
@@ -141,7 +197,9 @@ export default function InteractionForm() {
             </Flex>
 
             {/* Submit */}
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
           </Flex>
         </Form>
       </Card>
