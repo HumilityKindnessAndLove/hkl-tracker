@@ -1,4 +1,5 @@
-import { Card, Heading, Text } from "@radix-ui/themes";
+import { Heading } from "@radix-ui/themes";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 
 export default function ProfilePage() {
   return (
@@ -7,18 +8,7 @@ export default function ProfilePage() {
         Profile
       </Heading>
 
-      <Card size="3">
-        <div className="space-y-4">
-          <Text as="div">
-            This is the Profile page where users can view their profile
-            information and share a unique QR code/link.
-          </Text>
-          <Text as="div" color="gray">
-            Profile management components and functionality will be implemented
-            here.
-          </Text>
-        </div>
-      </Card>
+      <QRCodeDisplay />
     </div>
   );
 }
