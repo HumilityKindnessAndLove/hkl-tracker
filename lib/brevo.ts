@@ -1,12 +1,13 @@
 interface BrevoContact {
   email: string;
   attributes?: {
-    FIRSTNAME?: string;
-    LASTNAME?: string;
-    STATE?: string;
-    COUNTRY?: string;
-    SMS?: string;
-    [key: string]: unknown;
+    FIRSTNAME?: string | null;
+    CITY?: string | null;
+    STATE?: string | null;
+    COUNTRY?: string | null;
+    SMS?: string | null;
+    YOUR_PREFERRED_LANGUAGE?: string | null;
+    VOLUNTEER_ID?: string | null;
   };
   listIds?: number[];
   updateEnabled?: boolean;
@@ -22,7 +23,6 @@ interface BrevoError {
 }
 
 interface BrevoResult {
-  status: "success" | "error" | "skipped";
   brevo_id?: number;
   brevo_status?: string;
   brevo_error?: string;
@@ -48,7 +48,7 @@ function getDefaultBrevoListIds(): number[] | null {
 
 export async function createBrevoContact(
   email: string,
-  attributes: Record<string, unknown>,
+  attributes: BrevoContact["attributes"],
   listIds?: number[],
 ): Promise<BrevoResult> {
   const apiKey = process.env.BREVO_API_KEY;
@@ -57,7 +57,7 @@ export async function createBrevoContact(
   if (!apiKey) {
     console.warn("BREVO_API_KEY is not set. Skipping Brevo contact creation.");
     return {
-      status: "skipped",
+      brevo_status: "skipped",
       brevo_error: "BREVO_API_KEY not configured",
       brevo_sent_at: timestamp,
     };
@@ -66,7 +66,7 @@ export async function createBrevoContact(
   if (!email) {
     console.warn("Email is required for Brevo contact creation");
     return {
-      status: "error",
+      brevo_status: "error",
       brevo_error: "Email is required",
       brevo_sent_at: timestamp,
     };
@@ -113,39 +113,37 @@ export async function createBrevoContact(
         const result = (await response.json()) as BrevoCreateContactResponse;
         console.log(`Successfully created Brevo contact for ${email}`);
         return {
-          status: "success",
           brevo_id: result.id,
-          brevo_status: "created",
+          brevo_status: "201",
           brevo_sent_at: timestamp,
         };
       } else if (response.status === 204) {
         console.log(`Successfully updated Brevo contact for ${email}`);
         return {
-          status: "success",
-          brevo_status: "updated",
+          brevo_status: "204",
           brevo_sent_at: timestamp,
         };
       } else if (response.status === 400) {
         const errorData = (await response.json()) as BrevoError;
         console.error(`Brevo API validation error: ${errorData.message}`);
         return {
-          status: "error",
-          brevo_error: `Validation error: ${errorData.message}`,
+          brevo_status: "400",
+          brevo_error: `${errorData.code}: ${errorData.message}`,
           brevo_sent_at: timestamp,
         };
       } else if (response.status === 425) {
         console.error(`Brevo API rate limit or temporary error for ${email}`);
         return {
-          status: "error",
+          brevo_status: "425",
           brevo_error: "Rate limit or temporary error",
           brevo_sent_at: timestamp,
         };
       } else {
         const errorData = (await response.json()) as BrevoError;
-        const errorMessage = `API error: ${response.status} - ${errorData.message || response.statusText}`;
-        console.error(`Brevo ${errorMessage}`);
+        const errorMessage = `${errorData.code}: ${errorData.message || response.statusText}`;
+        console.error(`Brevo API error (${response.status}): ${errorMessage}`);
         return {
-          status: "error",
+          brevo_status: response.status.toString(),
           brevo_error: errorMessage,
           brevo_sent_at: timestamp,
         };
@@ -157,7 +155,7 @@ export async function createBrevoContact(
       if (fetchError instanceof Error && fetchError.name === "AbortError") {
         console.error(`Brevo API timeout after ${timeoutMs}ms for ${email}`);
         return {
-          status: "error",
+          brevo_status: "error",
           brevo_error: `API timeout after ${timeoutMs}ms`,
           brevo_sent_at: timestamp,
         };
@@ -170,7 +168,7 @@ export async function createBrevoContact(
     console.error("Failed to create Brevo contact:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
-      status: "error",
+      brevo_status: "error",
       brevo_error: `Exception: ${errorMessage}`,
       brevo_sent_at: timestamp,
     };

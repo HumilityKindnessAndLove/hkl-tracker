@@ -94,17 +94,15 @@ export type Database = {
           city: string | null;
           country: string | null;
           email: string | null;
-          f_name: string | null;
           id: string;
+          language: Database["public"]["Enums"]["language_enum"] | null;
           location_id: string | null;
+          name: string | null;
           payload: Json | null;
-          qr_token: string | null;
           sms: string | null;
-          sms_country_code: string | null;
           source: string | null;
           submitted_at: string | null;
           volunteer_id: string | null;
-          your_preferred_language: number | null;
         };
         Insert: {
           brevo_error?: string | null;
@@ -114,17 +112,15 @@ export type Database = {
           city?: string | null;
           country?: string | null;
           email?: string | null;
-          f_name?: string | null;
           id?: string;
+          language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
+          name?: string | null;
           payload?: Json | null;
-          qr_token?: string | null;
           sms?: string | null;
-          sms_country_code?: string | null;
           source?: string | null;
           submitted_at?: string | null;
           volunteer_id?: string | null;
-          your_preferred_language?: number | null;
         };
         Update: {
           brevo_error?: string | null;
@@ -134,17 +130,15 @@ export type Database = {
           city?: string | null;
           country?: string | null;
           email?: string | null;
-          f_name?: string | null;
           id?: string;
+          language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
+          name?: string | null;
           payload?: Json | null;
-          qr_token?: string | null;
           sms?: string | null;
-          sms_country_code?: string | null;
           source?: string | null;
           submitted_at?: string | null;
           volunteer_id?: string | null;
-          your_preferred_language?: number | null;
         };
         Relationships: [
           {
@@ -419,7 +413,18 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      language_enum:
+        | "english"
+        | "bulgarian"
+        | "french"
+        | "german"
+        | "italian"
+        | "lithuanian"
+        | "punjabi"
+        | "polish"
+        | "malay"
+        | "russian"
+        | "spanish";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -549,6 +554,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      language_enum: [
+        "english",
+        "bulgarian",
+        "french",
+        "german",
+        "italian",
+        "lithuanian",
+        "punjabi",
+        "polish",
+        "malay",
+        "russian",
+        "spanish",
+      ],
+    },
   },
 } as const;

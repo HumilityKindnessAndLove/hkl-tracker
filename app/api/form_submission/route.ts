@@ -31,49 +31,81 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Attempt to create contact in Brevo if email is provided
-    // if (parsed.email && data?.id) {
-    //   try {
-    //     const brevoResult = await createBrevoContact(parsed.email, {
-    //       FIRSTNAME: parsed.f_name,
-    //       CITY: parsed.city,
-    //       COUNTRY: parsed.country,
-    //       YOUR_PREFERRED_LANGUAGE: parsed.your_preferred_language,
-    //       SMS__COUNTRY_CODE: parsed.sms_country_code,
-    //       SMS: parsed.sms,
-    //       VOLUNTEER_ID: insertPayload.volunteer_id,
-    //     });
+    // Attempt to create contact in Brevo asynchronously (don't await)
+    if (parsed.email && data?.id) {
+      // Map enum to numeric string for Brevo (legacy format)
+      const languageMap: Record<string, string> = {
+        english: "1",
+        bulgarian: "2",
+        french: "3",
+        german: "4",
+        italian: "5",
+        lithuanian: "6",
+        punjabi: "7",
+        polish: "8",
+        malay: "9",
+        russian: "10",
+        spanish: "11",
+      };
 
-    //     // Update the form submission with Brevo result
-    //     const { error: updateError } = await supabase
-    //       .from("form_submissions")
-    //       .update({
-    //         brevo_status: brevoResult.brevo_status,
-    //         brevo_sent_at: brevoResult.brevo_sent_at,
-    //         brevo_error: brevoResult.brevo_error,
-    //         brevo_id: brevoResult.brevo_id,
-    //       })
-    //       .eq("id", data.id);
+      // Async function to handle Brevo contact creation and DB update
+      // TODO: should we await this and return Brevo status to user? (in case of error)
+      (async () => {
+        try {
+          if (!parsed.email) return;
 
-    //     if (updateError) {
-    //       console.error(
-    //         "Failed to update form submission with Brevo data:",
-    //         updateError,
-    //       );
-    //     }
-    //   } catch (error) {
-    //     console.error("Brevo integration failed:", error);
-    //     // Update with error status
-    //     await supabase
-    //       .from("form_submissions")
-    //       .update({
-    //         brevo_status: "error",
-    //         brevo_error: error instanceof Error ? error.message : String(error),
-    //         brevo_sent_at: new Date().toISOString(),
-    //       })
-    //       .eq("id", data.id);
-    //   }
-    // }
+          const brevoResult = await createBrevoContact(parsed.email, {
+            FIRSTNAME: parsed.name,
+            CITY: parsed.city,
+            COUNTRY: parsed.country,
+            YOUR_PREFERRED_LANGUAGE: parsed.language
+              ? (languageMap[parsed.language] ?? null)
+              : null,
+            SMS: parsed.sms,
+            VOLUNTEER_ID: insertPayload.volunteer_id as string | null,
+          });
+
+          // Update the form submission with Brevo result
+          const supabaseClient = await createClient();
+          const { error: updateError } = await supabaseClient
+            .from("form_submissions")
+            .update({
+              brevo_status: brevoResult.brevo_status,
+              brevo_sent_at: brevoResult.brevo_sent_at,
+              brevo_error: brevoResult.brevo_error,
+              brevo_id: brevoResult.brevo_id,
+            })
+            .eq("id", data.id);
+
+          if (updateError) {
+            console.error(
+              "Failed to update form submission with Brevo data:",
+              updateError,
+            );
+          }
+        } catch (error) {
+          console.error("Brevo integration failed:", error);
+          // Update with error status
+          try {
+            const supabaseClient = await createClient();
+            await supabaseClient
+              .from("form_submissions")
+              .update({
+                brevo_status: "error",
+                brevo_error:
+                  error instanceof Error ? error.message : String(error),
+                brevo_sent_at: new Date().toISOString(),
+              })
+              .eq("id", data.id);
+          } catch (dbError) {
+            console.error(
+              "Failed to update error status in database:",
+              dbError,
+            );
+          }
+        }
+      })();
+    }
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (err: unknown) {

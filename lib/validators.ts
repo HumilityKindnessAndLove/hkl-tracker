@@ -1,17 +1,30 @@
 import { z } from "zod";
 
 export const formSubmissionSchema = z.object({
-  f_name: z.string().nullable().optional(),
-  email: z.string().email().nullable().optional(),
+  name: z.string().nullable().optional(),
+  email: z.email().nullable().optional(),
   city: z.string().nullable().optional(),
   country: z.string().nullable().optional(),
-  your_preferred_language: z.number().nullable().optional(),
-  sms_country_code: z.string().nullable().optional(),
-  sms: z.string().nullable().optional(),
+  language: z
+    .enum([
+      "english",
+      "bulgarian",
+      "french",
+      "german",
+      "italian",
+      "lithuanian",
+      "punjabi",
+      "polish",
+      "malay",
+      "russian",
+      "spanish",
+    ])
+    .nullable()
+    .optional(),
+  sms: z.e164().nullable().optional(),
   volunteer_id: z.string().nullable().optional(),
   location_id: z.string().nullable().optional(),
   payload: z.any().nullable().optional(),
-  qr_token: z.string().nullable().optional(),
   source: z.string().nullable().optional(),
   submitted_at: z.string().nullable().optional(),
 });

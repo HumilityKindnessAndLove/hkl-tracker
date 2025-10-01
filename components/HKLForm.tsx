@@ -62,17 +62,17 @@ export default function HKLForm() {
   );
 
   const languages = [
-    { value: 1, label: "English" },
-    { value: 2, label: "Bulgarian" },
-    { value: 3, label: "French" },
-    { value: 4, label: "German" },
-    { value: 5, label: "Italian" },
-    { value: 6, label: "Lithuanian" },
-    { value: 7, label: "Punjabi" },
-    { value: 8, label: "Polish" },
-    { value: 9, label: "Malay" },
-    { value: 10, label: "Russian" },
-    { value: 11, label: "Spanish" },
+    { value: "english", label: "English" },
+    { value: "bulgarian", label: "Bulgarian" },
+    { value: "french", label: "French" },
+    { value: "german", label: "German" },
+    { value: "italian", label: "Italian" },
+    { value: "lithuanian", label: "Lithuanian" },
+    { value: "punjabi", label: "Punjabi" },
+    { value: "polish", label: "Polish" },
+    { value: "malay", label: "Malay" },
+    { value: "russian", label: "Russian" },
+    { value: "spanish", label: "Spanish" },
   ];
 
   const handlePhoneChange = (value: string) => {
@@ -112,13 +112,11 @@ export default function HKLForm() {
       }
 
       const payload = {
-        f_name: formData.get("name"),
+        name: formData.get("name"),
         email: formData.get("email"),
         country: selectedCountry || null,
         city: formData.get("city"),
-        your_preferred_language: selectedLanguage
-          ? parseInt(selectedLanguage, 10)
-          : null,
+        language: selectedLanguage || null,
         sms: phoneValidation.formatted,
         submitted_at: new Date().toISOString(),
       };
@@ -240,10 +238,7 @@ export default function HKLForm() {
                 <Select.Trigger placeholder="Select Language" />
                 <Select.Content>
                   {languages.map((language) => (
-                    <Select.Item
-                      key={language.value}
-                      value={language.value.toString()}
-                    >
+                    <Select.Item key={language.value} value={language.value}>
                       {language.label}
                     </Select.Item>
                   ))}
