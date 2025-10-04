@@ -14,9 +14,9 @@ export default function SignOutButton() {
   return (
     <Button
       onClick={handleSignOut}
-      size="3"
+      size="4"
       variant="ghost"
-      style={{ cursor: "pointer" }} // added to show clickable cursor
+      style={{ cursor: "pointer", minHeight: "44px" }} // added to show clickable cursor
     >
       Sign out
     </Button>

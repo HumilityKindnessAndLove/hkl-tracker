@@ -6,7 +6,6 @@ import {
   Card,
   Flex,
   Heading,
-  RadioGroup,
   Select,
   Text,
   TextArea,
@@ -15,12 +14,45 @@ import {
 import Form from "next/form";
 import React from "react";
 
+type Event = {
+  id: string;
+  title: string;
+  description: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  created_by: string | null;
+};
+
 export default function InteractionForm() {
   const [selectedType, setSelectedType] = React.useState("signup");
   const [selectedEvent, setSelectedEvent] = React.useState("none");
   const [selectedFriendliness, setSelectedFriendliness] =
     React.useState("friendly");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [events, setEvents] = React.useState<Event[]>([]);
+  const [isLoadingEvents, setIsLoadingEvents] = React.useState(true);
+
+  // Fetch events on component mount
+  React.useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const result = await response.json();
+        setEvents(result.data || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setIsLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -31,7 +63,7 @@ export default function InteractionForm() {
         outcome: selectedType,
         friendly: selectedFriendliness === "friendly",
         notes: formData.get("notes") || null,
-        // TODO: event_id: selectedEvent === "none" ? null : selectedEvent,
+        event_id: selectedEvent === "none" ? null : selectedEvent,
         date: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
       };
 
@@ -72,33 +104,34 @@ export default function InteractionForm() {
   };
 
   return (
-    <Box maxWidth="400px" mx="auto" my="6">
-      <Card size="3" variant="surface">
-        <Heading as="h2" size="5" mb="4" align="center">
+    <Box maxWidth={{ initial: "100%", sm: "500px" }} mx="auto" my="0">
+      <Card size={{ initial: "3", sm: "4" }}>
+        <Heading as="h2" size={{ initial: "6", sm: "7" }} mb="5" align="center">
           Add Interaction
         </Heading>
 
         <Form action={handleSubmit}>
-          <Flex direction="column" gap="4">
+          <Flex direction="column" gap="5">
             {/* Name */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Pledge Name <span style={{ color: "red" }}>*</span>
               </Text>
               <TextField.Root
                 name="name"
                 placeholder="Enter Pledge Name"
                 required
+                size="3"
               />
             </Flex>
 
             {/* Type of Interaction */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Type of Interaction
               </Text>
               <input type="hidden" name="outcome" value={selectedType} />
-              <Flex gap="2" justify="center" wrap="wrap">
+              <Flex gap="3" justify="center" wrap="wrap">
                 {["conversation", "signup", "rejection"].map((type) => (
                   <Button
                     key={type}
@@ -108,6 +141,8 @@ export default function InteractionForm() {
                       ? { color: "gray" as const }
                       : {})}
                     onClick={() => setSelectedType(type)}
+                    size="3"
+                    style={{ minHeight: "44px", minWidth: "100px" }}
                   >
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Button>
@@ -117,15 +152,15 @@ export default function InteractionForm() {
 
             {/* Friendly or Unfriendly */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                How was the interaction? (Button)
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
+                How was the interaction?
               </Text>
               <input
                 type="hidden"
                 name="friendly"
                 value={selectedFriendliness}
               />
-              <Flex gap="2" justify="center" wrap="wrap">
+              <Flex gap="3" justify="center" wrap="wrap">
                 {["friendly", "unfriendly"].map((type) => (
                   <Button
                     key={type}
@@ -137,6 +172,8 @@ export default function InteractionForm() {
                       ? { color: "gray" as const }
                       : {})}
                     onClick={() => setSelectedFriendliness(type)}
+                    size="3"
+                    style={{ minHeight: "44px", minWidth: "100px" }}
                   >
                     {type.charAt(0).toUpperCase() + type.slice(1)}
                   </Button>
@@ -144,60 +181,53 @@ export default function InteractionForm() {
               </Flex>
             </Flex>
 
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                How was the interaction? (Radio)
-              </Text>
-              <RadioGroup.Root
-                name="friendliness"
-                value={selectedFriendliness}
-                onValueChange={setSelectedFriendliness}
-                required
-              >
-                <Text as="label" size="2">
-                  <Flex gap="2" align="center">
-                    <RadioGroup.Item value="friendly" /> Friendly
-                  </Flex>
-                </Text>
-                <Text as="label" size="2">
-                  <Flex gap="2" align="center">
-                    <RadioGroup.Item value="unfriendly" />
-                    Unfriendly
-                  </Flex>
-                </Text>
-              </RadioGroup.Root>
-            </Flex>
-
             {/* Notes */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Additional Notes
               </Text>
               <TextArea
                 name="notes"
                 placeholder="Additional notes (optional)"
+                size="3"
+                rows={4}
               />
             </Flex>
 
             {/* Event */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Event
               </Text>
               <Select.Root
                 value={selectedEvent}
                 onValueChange={setSelectedEvent}
+                disabled={isLoadingEvents}
+                size="3"
               >
-                <Select.Trigger placeholder="Attach event" />
+                <Select.Trigger
+                  placeholder={
+                    isLoadingEvents ? "Loading events..." : "Attach event"
+                  }
+                />
                 <Select.Content>
                   <Select.Item value="none">None</Select.Item>
-                  <Select.Item value="Darbar Sahib">Darbar Sahib</Select.Item>
+                  {events.map((event) => (
+                    <Select.Item key={event.id} value={event.id}>
+                      {event.title}
+                    </Select.Item>
+                  ))}
                 </Select.Content>
               </Select.Root>
             </Flex>
 
             {/* Submit */}
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              size="4"
+              style={{ minHeight: "48px" }}
+            >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </Flex>

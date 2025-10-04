@@ -25,8 +25,9 @@ export const metadata: Metadata = {
   viewport: {
     width: "device-width",
     initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: "cover",
   },
 };
 
@@ -47,9 +48,18 @@ export default function RootLayout({
           grayColor="sage"
           panelBackground="solid"
           radius="full"
+          scaling="110%"
         >
           <NavBar />
-          <div className="pt-16 md:pt-20 pb-20 md:pb-4">{children}</div>
+          <div
+            className="pt-16 md:pt-20 pb-24 md:pb-4"
+            style={{
+              paddingBottom:
+                "max(6rem, calc(6rem + env(safe-area-inset-bottom)))",
+            }}
+          >
+            {children}
+          </div>
         </Theme>
       </body>
     </html>

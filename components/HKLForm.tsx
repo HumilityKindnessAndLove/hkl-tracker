@@ -156,29 +156,30 @@ export default function HKLForm() {
   };
 
   return (
-    <Box maxWidth="400px" mx="auto" my="6">
-      <Card size="3" variant="surface">
-        <Heading as="h2" size="5" mb="4" align="center">
+    <Box maxWidth={{ initial: "100%", sm: "500px" }} mx="auto" my="0">
+      <Card size={{ initial: "3", sm: "4" }}>
+        <Heading as="h2" size={{ initial: "6", sm: "7" }} mb="5" align="center">
           HKL Pledge Form
         </Heading>
 
         <Form action={handleSubmit}>
-          <Flex direction="column" gap="4">
+          <Flex direction="column" gap="5">
             {/* Pledge Name */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Pledge Name <span style={{ color: "red" }}>*</span>
               </Text>
               <TextField.Root
                 name="name"
                 placeholder="Enter Your Pledge Name"
                 required
+                size="3"
               />
             </Flex>
 
             {/* Email */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Email <span style={{ color: "red" }}>*</span>
               </Text>
               <TextField.Root
@@ -186,12 +187,13 @@ export default function HKLForm() {
                 type="email"
                 placeholder="Enter Pledge Email"
                 required
+                size="3"
               />
             </Flex>
 
             {/* Country */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Country <span style={{ color: "red" }}>*</span>
               </Text>
               <input type="hidden" name="country" value={selectedCountry} />
@@ -200,6 +202,7 @@ export default function HKLForm() {
                 value={selectedCountry}
                 onValueChange={setSelectedCountry}
                 required
+                size="3"
               >
                 <Select.Trigger placeholder="Select Country" />
                 <Select.Content>
@@ -214,19 +217,20 @@ export default function HKLForm() {
 
             {/* City */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 City <span style={{ color: "red" }}>*</span>
               </Text>
               <TextField.Root
                 name="city"
                 placeholder="Enter your City"
                 required
+                size="3"
               />
             </Flex>
 
             {/* Preferred Language */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Preferred Language
               </Text>
               <input type="hidden" name="language" value={selectedLanguage} />
@@ -234,6 +238,7 @@ export default function HKLForm() {
                 name="language"
                 value={selectedLanguage}
                 onValueChange={setSelectedLanguage}
+                size="3"
               >
                 <Select.Trigger placeholder="Select Language" />
                 <Select.Content>
@@ -248,7 +253,7 @@ export default function HKLForm() {
 
             {/* Phone Number */}
             <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
+              <Text as="label" size={{ initial: "3", sm: "2" }} weight="medium">
                 Phone Number
               </Text>
               <TextField.Root
@@ -256,6 +261,7 @@ export default function HKLForm() {
                 type="tel"
                 placeholder="Enter your Phone Number"
                 onChange={(e) => handlePhoneChange(e.target.value)}
+                size="3"
               >
                 {detectedCountryCode && (
                   <TextField.Slot side="left">
@@ -266,7 +272,7 @@ export default function HKLForm() {
                 )}
               </TextField.Root>
               {phoneError && (
-                <Text size="1" color="red">
+                <Text size="2" color="red">
                   {phoneError}
                 </Text>
               )}
@@ -275,9 +281,10 @@ export default function HKLForm() {
             {/* Submit Button */}
             <Button
               type="submit"
-              size="3"
+              size="4"
               variant="solid"
               disabled={isSubmitting}
+              style={{ minHeight: "48px" }}
             >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>

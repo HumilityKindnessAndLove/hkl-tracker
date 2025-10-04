@@ -8,6 +8,35 @@
   --cursor-menu-item: pointer;
 }
 
+/* Mobile-first responsive typography and sizing */
+@media (max-width: 768px) {
+  .radix-themes {
+    /* Increase base font size on mobile */
+    font-size: 16px;
+  }
+
+  /* Make buttons more touch-friendly on mobile */
+  .rt-Button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase input field sizes on mobile */
+  .rt-TextFieldRoot,
+  .rt-TextAreaRoot,
+  .rt-SelectTrigger {
+    min-height: 48px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Larger touch targets for radio and checkbox */
+  .rt-RadioGroupItem,
+  .rt-CheckboxButton {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
@@ -17,6 +46,14 @@
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Support for safe area insets */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 :root,

@@ -15,7 +15,11 @@ export default function SignInButton() {
   };
 
   return (
-    <Button onClick={handleSignIn} size="3" style={{ cursor: "pointer" }}>
+    <Button
+      onClick={handleSignIn}
+      size="4"
+      style={{ cursor: "pointer", minHeight: "48px", minWidth: "200px" }}
+    >
       Sign in with Google
     </Button>
   );

@@ -19,35 +19,38 @@ export default async function Home() {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="font-bold text-center text-6xl">HKL Tracking App</h1>
+    <div className="flex flex-col items-center justify-center px-4">
+      <h1 className="font-bold text-center text-4xl md:text-6xl mb-4">
+        HKL Tracking App
+      </h1>
 
-      <div className="text-center mt-4">
+      <div className="text-center mt-4 w-full max-w-md">
         {user ? (
           <div className="flex flex-col items-center">
-            <Card>
-              <Flex gap="3" align="center">
+            <Card size={{ initial: "3", sm: "4" }}>
+              <Flex gap="4" align="center">
                 <Avatar
                   src={
                     user.user_metadata?.avatar_url ||
                     user.user_metadata?.picture
                   }
                   alt={displayName}
-                  className="w-20 h-20 rounded-full"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-full"
                   fallback={initials}
+                  size={{ initial: "6", sm: "7" }}
                 />
                 <Box>
-                  <Text as="div" size="2" weight="bold">
+                  <Text as="div" size={{ initial: "3", sm: "4" }} weight="bold">
                     {displayName}
                   </Text>
-                  <Text as="div" size="2" color="gray">
+                  <Text as="div" size={{ initial: "2", sm: "3" }} color="gray">
                     {user.email}
                   </Text>
                 </Box>
               </Flex>
             </Card>
 
-            <div className="mt-4">
+            <div className="mt-6">
               <SignOutButton />
             </div>
           </div>

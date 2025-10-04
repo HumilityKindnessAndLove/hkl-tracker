@@ -72,10 +72,12 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
   if (loading) {
     return (
-      <Card size="3">
+      <Card size={{ initial: "3", sm: "4" }}>
         <div className="flex flex-col items-center justify-center space-y-4 p-8">
           <Spinner size="3" />
-          <Text>Generating your QR code...</Text>
+          <Text size={{ initial: "3", sm: "2" }}>
+            Generating your QR code...
+          </Text>
         </div>
       </Card>
     );
@@ -83,12 +85,21 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
   if (error) {
     return (
-      <Card size="3">
+      <Card size={{ initial: "3", sm: "4" }}>
         <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <Text color="red" className="text-center">
+          <Text
+            color="red"
+            className="text-center"
+            size={{ initial: "3", sm: "2" }}
+          >
             {error}
           </Text>
-          <Button onClick={regenerateQRCode} variant="outline">
+          <Button
+            onClick={regenerateQRCode}
+            variant="outline"
+            size="3"
+            style={{ minHeight: "44px" }}
+          >
             Try Again
           </Button>
         </div>
@@ -97,9 +108,13 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
   }
 
   return (
-    <Card size="3">
+    <Card size={{ initial: "3", sm: "4" }}>
       <div className="flex flex-col items-center space-y-4 p-6">
-        <Text size="4" weight="bold" className="text-center">
+        <Text
+          size={{ initial: "5", sm: "6" }}
+          weight="bold"
+          className="text-center"
+        >
           Your QR Code
         </Text>
 
@@ -110,20 +125,29 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
           </div>
         )}
 
-        <div className="flex flex-col items-center space-y-2">
-          <Text size="2" color="gray" className="text-center">
+        <div className="flex flex-col items-center space-y-3">
+          <Text
+            size={{ initial: "3", sm: "2" }}
+            color="gray"
+            className="text-center"
+          >
             Share this QR code for quick access
           </Text>
 
           {qrUrl && (
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center space-y-3 w-full">
               <Text
-                size="1"
-                className="text-center font-mono bg-gray-100 p-2 rounded"
+                size={{ initial: "2", sm: "1" }}
+                className="text-center font-mono bg-gray-100 p-3 rounded break-all"
               >
                 {qrUrl}
               </Text>
-              <Button onClick={copyToClipboard} variant="outline" size="2">
+              <Button
+                onClick={copyToClipboard}
+                variant="outline"
+                size="3"
+                style={{ minHeight: "44px" }}
+              >
                 Copy URL
               </Button>
             </div>

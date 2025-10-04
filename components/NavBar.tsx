@@ -75,25 +75,26 @@ export default function NavBar() {
       {/* Mobile Navigation - Bottom */}
       <nav
         aria-label="Primary"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm pb-1 pt-1"
+        className="md:hidden fixed inset-x-0 bottom-0 z-50 bg-[var(--color-background)] border-t border-gray-6 backdrop-blur-sm"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 1rem)" }}
       >
-        <div className="mx-auto max-w-4xl px-8">
-          <ul className="flex items-center justify-center gap-4">
+        <div className="mx-auto max-w-sm">
+          <ul className="flex items-center justify-center gap-4 py-2">
             {items.map(({ href, icon: Icon }) => {
               const active = pathname === href;
               return (
-                <li key={href}>
+                <li key={href} className="w-auto">
                   <Button
                     asChild
                     variant={active ? "solid" : "soft"}
                     highContrast={active}
-                    size="3"
+                    size="4"
                   >
                     <Link
                       href={href}
-                      className="flex flex-col items-center gap-1 py-2 px-4"
+                      className="flex flex-col items-center gap-1 py-2 px-3"
                     >
-                      <Icon />
+                      <Icon className="w-6 h-6" />
                     </Link>
                   </Button>
                 </li>
