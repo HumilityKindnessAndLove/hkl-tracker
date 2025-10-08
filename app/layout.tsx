@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
-import NavBar from "@/components/NavBar";
+import ContentWrapper from "@/components/ContentWrapper";
 import PWAInstaller from "@/components/PWAInstaller";
 
 const ubuntu = Ubuntu({
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" className={ubuntu.variable}>
       <head>
@@ -50,8 +50,7 @@ export default function RootLayout({
           radius="full"
           scaling="110%"
         >
-          <NavBar />
-          <div className="pt-16 md:pt-20 pb-20 md:pb-4">{children}</div>
+          <ContentWrapper>{children}</ContentWrapper>
         </Theme>
       </body>
     </html>
