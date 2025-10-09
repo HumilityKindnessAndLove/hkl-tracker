@@ -18,10 +18,24 @@ export async function GET() {
       );
     }
 
+    // Filter events that are currently ongoing or have no specified start/end date
+    const now = new Date().toISOString();
+    const filteredEvents =
+      events?.filter((event) => {
+        // Include if no dates specified
+        if (!event.starts_at && !event.ends_at) {
+          return true;
+        }
+        // Include if currently ongoing
+        const isAfterStart = !event.starts_at || event.starts_at <= now;
+        const isBeforeEnd = !event.ends_at || event.ends_at >= now;
+        return isAfterStart && isBeforeEnd;
+      }) || [];
+
     return NextResponse.json(
       {
-        data: events,
-        count: events?.length || 0,
+        data: filteredEvents,
+        count: filteredEvents.length,
       },
       { status: 200 },
     );

@@ -6,7 +6,6 @@ import {
   Card,
   Flex,
   Heading,
-  RadioGroup,
   Select,
   Text,
   TextArea,
@@ -15,12 +14,45 @@ import {
 import Form from "next/form";
 import React from "react";
 
+type Event = {
+  id: string;
+  title: string;
+  description: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  created_by: string | null;
+};
+
 export default function InteractionForm() {
   const [selectedType, setSelectedType] = React.useState("signup");
   const [selectedEvent, setSelectedEvent] = React.useState("none");
   const [selectedFriendliness, setSelectedFriendliness] =
     React.useState("friendly");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [events, setEvents] = React.useState<Event[]>([]);
+  const [isLoadingEvents, setIsLoadingEvents] = React.useState(true);
+
+  // Fetch events on component mount
+  React.useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("/api/events");
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const result = await response.json();
+        setEvents(result.data || []);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setIsLoadingEvents(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   const handleSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -31,7 +63,7 @@ export default function InteractionForm() {
         outcome: selectedType,
         friendly: selectedFriendliness === "friendly",
         notes: formData.get("notes") || null,
-        // TODO: event_id: selectedEvent === "none" ? null : selectedEvent,
+        event_id: selectedEvent === "none" ? null : selectedEvent,
         date: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
       };
 
@@ -118,7 +150,7 @@ export default function InteractionForm() {
             {/* Friendly or Unfriendly */}
             <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
-                How was the interaction? (Button)
+                How was the interaction?
               </Text>
               <input
                 type="hidden"
@@ -144,30 +176,6 @@ export default function InteractionForm() {
               </Flex>
             </Flex>
 
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                How was the interaction? (Radio)
-              </Text>
-              <RadioGroup.Root
-                name="friendliness"
-                value={selectedFriendliness}
-                onValueChange={setSelectedFriendliness}
-                required
-              >
-                <Text as="label" size="2">
-                  <Flex gap="2" align="center">
-                    <RadioGroup.Item value="friendly" /> Friendly
-                  </Flex>
-                </Text>
-                <Text as="label" size="2">
-                  <Flex gap="2" align="center">
-                    <RadioGroup.Item value="unfriendly" />
-                    Unfriendly
-                  </Flex>
-                </Text>
-              </RadioGroup.Root>
-            </Flex>
-
             {/* Notes */}
             <Flex direction="column" gap="2">
               <Text as="label" size="2" weight="medium">
@@ -188,16 +196,29 @@ export default function InteractionForm() {
                 value={selectedEvent}
                 onValueChange={setSelectedEvent}
               >
-                <Select.Trigger placeholder="Attach event" />
+                <Select.Trigger
+                  placeholder={
+                    isLoadingEvents ? "Loading events..." : "Attach event"
+                  }
+                />
                 <Select.Content>
                   <Select.Item value="none">None</Select.Item>
-                  <Select.Item value="Darbar Sahib">Darbar Sahib</Select.Item>
+                  {events.map((event) => (
+                    <Select.Item key={event.id} value={event.id}>
+                      {event.title}
+                    </Select.Item>
+                  ))}
                 </Select.Content>
               </Select.Root>
             </Flex>
 
             {/* Submit */}
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              size="4"
+              style={{ minHeight: "48px" }}
+            >
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </Flex>

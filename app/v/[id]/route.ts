@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 
 // Helper function to extract IP address from request
@@ -15,15 +16,18 @@ function getClientIP(request: Request): string | null {
   return null;
 }
 
-async function trackQRVisit(qrLinkId: string, request: Request) {
+async function trackQRVisit(
+  qrLinkId: string,
+  ip: string | null,
+  userAgent: string | null,
+  supabase: SupabaseClient,
+) {
   try {
-    const supabase = await createClient();
-
     const visitData = {
       qr_link_id: parseInt(qrLinkId, 10),
       visited_at: new Date().toISOString(),
-      ip: getClientIP(request),
-      user_agent: request.headers.get("user-agent") || null,
+      ip,
+      user_agent: userAgent,
     };
 
     const { error } = await supabase.from("qr_visits").insert(visitData);
@@ -70,13 +74,15 @@ export async function GET(
     // TODO - ENV VAR
     const redirectUrl = `https://www.hkl.org/i-commit-test-only?volunteer_id=${qrLink.volunteer_id}`;
 
-    const redirectResponse = Response.redirect(redirectUrl, 302);
+    // Track the visit asynchronously (extract data before response)
+    const ip = getClientIP(request);
+    const userAgent = request.headers.get("user-agent") || null;
 
-    // Track the visit asynchronously
-    trackQRVisit(id, request).catch((error) => {
+    trackQRVisit(id, ip, userAgent, supabase).catch((error) => {
       console.error("Background QR visit tracking failed:", error);
     });
 
+    const redirectResponse = Response.redirect(redirectUrl, 302);
     return redirectResponse;
   } catch (error) {
     console.error("Error processing QR link:", error);
