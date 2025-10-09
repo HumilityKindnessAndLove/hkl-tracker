@@ -21,12 +21,7 @@ export default function ContentWrapper({ children }: { children: ReactNode }) {
     if (topNavRef.current) observer.observe(topNavRef.current);
     if (bottomNavRef.current) observer.observe(bottomNavRef.current);
 
-    window.addEventListener("resize", measure);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
