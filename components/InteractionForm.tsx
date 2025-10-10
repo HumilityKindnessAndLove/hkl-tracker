@@ -13,6 +13,8 @@ import {
 } from "@radix-ui/themes";
 import Form from "next/form";
 import React from "react";
+import Image from "next/image";
+
 
 type Event = {
   id: string;
@@ -105,6 +107,13 @@ export default function InteractionForm() {
 
   return (
     <Box maxWidth="400px" mx="auto" my="6">
+      <Image
+        src="/icon.png"
+        alt="HKL Logo"
+        width={80}       // adjust size as desired
+        height={80}
+        style={{ margin: "0 auto", display: "block" }}
+      />
       <Card size="3" variant="surface">
         <Heading as="h2" size="5" mb="4" align="center">
           Add Interaction

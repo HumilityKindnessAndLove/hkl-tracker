@@ -14,6 +14,7 @@ import { countries } from "countries-list";
 import Form from "next/form";
 import React, { useMemo } from "react";
 import { validatePhone } from "../lib/phone";
+import Image from "next/image";
 
 export default function HKLForm() {
   const [selectedCountry, setSelectedCountry] = React.useState("");
@@ -51,15 +52,31 @@ export default function HKLForm() {
     detectUserCountry();
   }, []);
 
-  const countryList = useMemo(
-    () =>
-      Object.values(countries).map((country) => ({
-        value: country.name,
-        label: country.name,
-        code: country.phone[0],
-      })),
-    [],
+const groupedCountries = useMemo(() => {
+  const list = Object.values(countries)
+    .map((country) => ({
+      value: country.name,
+      label: country.name,
+      code: String(country.phone[0] || ""),
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const priorityCountries = list.filter((c) =>
+    ["Canada", "United States", "United Kingdom"].includes(c.label),
   );
+
+  const grouped = list.reduce((groups, country) => {
+    if (["Canada", "United States", "United Kingdom"].includes(country.label)) return groups;
+
+    const firstLetter = country.label[0].toUpperCase();
+    if (!groups[firstLetter]) groups[firstLetter] = [];
+    groups[firstLetter].push(country);
+    return groups;
+  }, {} as Record<string, { value: string; label: string; code: string }[]>);
+
+  return { priority: priorityCountries, grouped };
+}, []);
+
 
   const languages = [
     { value: "english", label: "English" },
@@ -137,12 +154,10 @@ export default function HKLForm() {
       const result = await response.json();
       console.log("Form submitted successfully:", result);
 
-      // Reset form on success
       setSelectedCountry("");
       setSelectedLanguage("");
       setPhoneError("");
 
-      // Reset form fields
       const form = document.querySelector("form") as HTMLFormElement;
       if (form) form.reset();
 
@@ -157,7 +172,15 @@ export default function HKLForm() {
 
   return (
     <Box maxWidth="400px" mx="auto" my="6">
+      <Image
+        src="/icon.png"
+        alt="HKL Logo"
+        width={80}       // adjust size as desired
+        height={80}
+        style={{ margin: "0 auto", display: "block" }}
+      />
       <Card size="3" variant="surface">
+      
         <Heading as="h2" size="5" mb="4" align="center">
           HKL Pledge Form
         </Heading>
@@ -195,6 +218,7 @@ export default function HKLForm() {
                 Country <span style={{ color: "red" }}>*</span>
               </Text>
               <input type="hidden" name="country" value={selectedCountry} />
+
               <Select.Root
                 name="country"
                 value={selectedCountry}
@@ -203,14 +227,36 @@ export default function HKLForm() {
               >
                 <Select.Trigger placeholder="Select Country" />
                 <Select.Content>
-                  {countryList.map((country) => (
-                    <Select.Item key={country.value} value={country.value}>
-                      {country.label}
-                    </Select.Item>
+                  {/* Priority section */}
+                  {groupedCountries.priority.length > 0 && (
+                    <Select.Group>
+                      <Select.Label>*</Select.Label>
+                      {groupedCountries.priority.map((country) => (
+                        <Select.Item key={country.value} value={country.value}>
+                          {country.label}
+                        </Select.Item>
+                      ))}
+                    </Select.Group>
+                  )}
+
+                  {/* Alphabetically grouped countries */}
+                  {Object.keys(groupedCountries.grouped).map((letter) => (
+                    <React.Fragment key={letter}>
+                      <Select.Group>
+                        <Select.Label>{letter}</Select.Label>
+                        {groupedCountries.grouped[letter].map((country) => (
+                          <Select.Item key={country.value} value={country.value}>
+                            {country.label}
+                          </Select.Item>
+                        ))}
+                      </Select.Group>
+                    </React.Fragment>
                   ))}
                 </Select.Content>
               </Select.Root>
             </Flex>
+
+
 
             {/* City */}
             <Flex direction="column" gap="2">
