@@ -61,8 +61,9 @@ const groupedCountries = useMemo(() => {
   );
 
   const grouped = list.reduce((groups, country) => {
-    if (["Canada", "United States", "United Kingdom"].includes(country.label)) return groups;
-
+    if (["Canada", "United States", "United Kingdom"].includes(country.label)){
+        return groups;
+      }
     const firstLetter = country.label[0].toUpperCase();
     if (!groups[firstLetter]) groups[firstLetter] = [];
     groups[firstLetter].push(country);
