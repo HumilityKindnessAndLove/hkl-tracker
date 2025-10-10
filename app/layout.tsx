@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import { Theme } from "@radix-ui/themes";
+import type { Metadata, Viewport } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import ContentWrapper from "@/components/ContentWrapper";
@@ -15,19 +16,20 @@ export const metadata: Metadata = {
   title: "HKL Tracker",
   description: "A tool for canvassers to track interactions with the public.",
   manifest: "/manifest.json",
-  themeColor: "#174548",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "HKL Tracker",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-    viewportFit: "cover",
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
