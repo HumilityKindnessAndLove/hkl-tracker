@@ -175,16 +175,14 @@ const groupedCountries = useMemo(() => {
       <Image
         src="/icon.png"
         alt="HKL Logo"
-        width={80}       // adjust size as desired
+        width={80}    
         height={80}
         style={{ margin: "0 auto", display: "block" }}
       />
       <Card size="3" variant="surface">
-      
         <Heading as="h2" size="5" mb="4" align="center">
           HKL Pledge Form
         </Heading>
-
         <Form action={handleSubmit}>
           <Flex direction="column" gap="4">
             {/* Pledge Name */}
@@ -227,7 +225,6 @@ const groupedCountries = useMemo(() => {
               >
                 <Select.Trigger placeholder="Select Country" />
                 <Select.Content>
-                  {/* Priority section */}
                   {groupedCountries.priority.length > 0 && (
                     <Select.Group>
                       <Select.Label>*</Select.Label>
@@ -239,7 +236,7 @@ const groupedCountries = useMemo(() => {
                     </Select.Group>
                   )}
 
-                  {/* Alphabetically grouped countries */}
+                  {/*grouped countries */}
                   {Object.keys(groupedCountries.grouped).map((letter) => (
                     <React.Fragment key={letter}>
                       <Select.Group>
@@ -255,8 +252,6 @@ const groupedCountries = useMemo(() => {
                 </Select.Content>
               </Select.Root>
             </Flex>
-
-
 
             {/* City */}
             <Flex direction="column" gap="2">
