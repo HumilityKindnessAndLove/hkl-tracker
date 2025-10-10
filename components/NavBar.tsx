@@ -16,13 +16,22 @@ const items = [
   { href: "/profile", label: "Profile", icon: PersonIcon },
 ];
 
-export default function NavBar() {
+export default function NavBar({
+  topRef,
+  bottomRef,
+}: {
+  topRef: React.RefObject<HTMLElement | null>;
+  bottomRef: React.RefObject<HTMLElement | null>;
+}) {
   const pathname = usePathname();
 
   return (
     <>
       {/* Desktop Navigation - Top */}
-      <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-gray-6 bg-[var(--color-background)] backdrop-blur-sm">
+      <nav
+        ref={topRef}
+        className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-gray-6 bg-[var(--color-background)] backdrop-blur-sm"
+      >
         <div className="mx-auto max-w-4xl">
           <ul className="flex items-center justify-between gap-1 p-3">
             {/* Home button - left aligned */}
@@ -75,6 +84,7 @@ export default function NavBar() {
       {/* Mobile Navigation - Bottom */}
       <nav
         aria-label="Primary"
+        ref={bottomRef}
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm pb-1 pt-1"
       >
         <div className="mx-auto max-w-4xl px-8">
