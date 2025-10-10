@@ -8,6 +8,8 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import Form from "next/form";
 import React from "react";
+import Image from "next/image";
+
 
 type Event = {
   id: string;
@@ -100,6 +102,13 @@ export default function InteractionForm() {
 
   return (
     <div className="max-w-md mx-auto my-6">
+      <Image
+          src="/icon.png"
+          alt="HKL Logo"
+          width={80}
+          height={80}
+          style={{ margin: "0 auto", display: "block" }}
+        />
       <Card>
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-center mb-4">
