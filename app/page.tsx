@@ -1,4 +1,5 @@
-import { Avatar, Box, Card, Flex, Text } from "@radix-ui/themes";
+import { Avatar } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "../components/SignOutButton";
@@ -26,25 +27,23 @@ export default async function Home() {
         {user ? (
           <div className="flex flex-col items-center">
             <Card>
-              <Flex gap="3" align="center">
+              <div className="flex gap-3 items-center p-6">
                 <Avatar
                   src={
                     user.user_metadata?.avatar_url ||
                     user.user_metadata?.picture
                   }
                   alt={displayName}
-                  className="w-20 h-20 rounded-full"
+                  className="w-20 h-20"
                   fallback={initials}
                 />
-                <Box>
-                  <Text as="div" size="2" weight="bold">
-                    {displayName}
-                  </Text>
-                  <Text as="div" size="2" color="gray">
+                <div>
+                  <div className="text-sm font-bold">{displayName}</div>
+                  <div className="text-sm text-muted-foreground">
                     {user.email}
-                  </Text>
-                </Box>
-              </Flex>
+                  </div>
+                </div>
+              </div>
             </Card>
 
             <div className="mt-4">

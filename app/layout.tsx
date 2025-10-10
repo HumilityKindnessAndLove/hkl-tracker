@@ -1,10 +1,9 @@
-import { Theme } from "@radix-ui/themes";
 import type { Metadata } from "next";
 import { Ubuntu } from "next/font/google";
-import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import PWAInstaller from "@/components/PWAInstaller";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
   title: "HKL Tracker",
   description: "A tool for canvassers to track interactions with the public.",
   manifest: "/manifest.json",
-  themeColor: "#ffffff",
+  themeColor: "#174548",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -37,12 +36,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={ubuntu.variable}>
+    <html lang="en" className={ubuntu.variable} suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <PWAInstaller />
+<<<<<<< Updated upstream
         <Theme
           accentColor="teal"
           grayColor="sage"
@@ -53,6 +53,11 @@ export default function RootLayout({
           <NavBar />
           <div className="pt-16 md:pt-20 pb-20 md:pb-4">{children}</div>
         </Theme>
+=======
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ContentWrapper>{children}</ContentWrapper>
+        </ThemeProvider>
+>>>>>>> Stashed changes
       </body>
     </html>
   );
