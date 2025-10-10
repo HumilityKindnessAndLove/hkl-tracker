@@ -20,14 +20,14 @@ export default function ProfilePage() {
   const displayName = user?.user_metadata?.name ?? user?.email ?? "Volunteer";
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#ebddd7] via-[#eee7b7] to-[#ed868b]">
+    <div className="fixed inset-0 w-full h-full overflow-hidden bg-gradient-to-br from-[#ebddd7] via-[#eee7b7] to-[#ed868b]">
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-72 h-72 bg-[#EBAD1F] rounded-full mix-blend-multiply filter blur-xl animate-blob" />
         <div className="absolute top-40 right-10 w-72 h-72 bg-[#ffdf5a] rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000" />
         <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-[#d2285e] rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4 gap-8">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 gap-8">
         {/* TODO: HKL Logo goes here */}
 
         <div className="w-full max-w-md shadow-2xl rounded-[3rem] bg-white/30 backdrop-blur-3xl backdrop-saturate-150 overflow-hidden ring-1 ring-white/40">
