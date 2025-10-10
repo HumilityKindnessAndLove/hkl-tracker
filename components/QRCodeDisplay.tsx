@@ -1,10 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import QRCode from "qrcode";
 import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface QRCodeDisplayProps {
   size?: number;
@@ -12,7 +11,7 @@ interface QRCodeDisplayProps {
 
 export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
-  const [qrUrl, setQrUrl] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +30,6 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
       const data = await response.json();
       const url = data.url;
-      setQrUrl(url);
 
       // Generate QR code image
       const qrDataUrl = await QRCode.toDataURL(url, {
@@ -62,68 +60,47 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
     await fetchQRCode();
   };
 
-  const copyToClipboard = async () => {
-    if (qrUrl) {
-      try {
-        await navigator.clipboard.writeText(qrUrl);
-      } catch (err) {
-        console.error("Failed to copy to clipboard:", err);
-      }
-    }
-  };
-
   if (loading) {
     return (
-      <Card>
-        <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <Spinner size="lg" />
-          <p className="text-sm">Generating your QR code...</p>
-        </div>
-      </Card>
+      <div
+        className="flex flex-col items-center justify-center gap-2 border border-gray-200"
+        style={{ width: size, height: size }}
+      >
+        <Spinner size="lg" />
+        <p className="text-xs">Loading...</p>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card>
-        <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <p className="text-destructive text-center text-sm">{error}</p>
-          <Button onClick={regenerateQRCode} variant="outline">
-            Try Again
-          </Button>
-        </div>
-      </Card>
+      <div
+        className="flex flex-col items-center justify-center gap-2 p-4 border border-gray-200"
+        style={{ width: size, height: size }}
+      >
+        <p className="text-red-500 text-center text-xs">{error}</p>
+        <Button onClick={regenerateQRCode} variant="outline" size="sm">
+          Try Again
+        </Button>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <div className="flex flex-col items-center space-y-4 p-6">
-        <h3 className="text-lg font-bold text-center">Your QR Code</h3>
-
-        {qrCodeDataUrl && (
-          <div className="border border-border rounded-lg">
-            <img src={qrCodeDataUrl} alt="QR Code" width={size} height={size} />
-          </div>
-        )}
-
-        <div className="flex flex-col items-center space-y-2">
-          <p className="text-sm text-muted-foreground text-center">
-            Share this QR code for quick access
-          </p>
-
-          {qrUrl && (
-            <div className="flex flex-col items-center space-y-2">
-              <p className="text-xs text-center font-mono bg-muted p-2 rounded">
-                {qrUrl}
-              </p>
-              <Button onClick={copyToClipboard} variant="outline" size="sm">
-                Copy URL
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    </Card>
+    <div
+      className="border border-gray-200"
+      style={{ width: size, height: size }}
+    >
+      {qrCodeDataUrl && (
+        // biome-ignore lint/performance/noImgElement: QR code is a data URL, not a regular image
+        <img
+          src={qrCodeDataUrl}
+          alt="QR Code"
+          width={size}
+          height={size}
+          className="block"
+        />
+      )}
+    </div>
   );
 }
