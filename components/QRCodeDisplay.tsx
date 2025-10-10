@@ -1,8 +1,9 @@
 "use client";
 
-import { Button, Spinner, Text } from "@radix-ui/themes";
 import QRCode from "qrcode";
 import { useCallback, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 interface QRCodeDisplayProps {
   size?: number;
@@ -65,8 +66,8 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
         className="flex flex-col items-center justify-center gap-2 border border-gray-200"
         style={{ width: size, height: size }}
       >
-        <Spinner size="3" />
-        <Text size="1">Loading...</Text>
+        <Spinner size="lg" />
+        <p className="text-xs">Loading...</p>
       </div>
     );
   }
@@ -77,10 +78,8 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
         className="flex flex-col items-center justify-center gap-2 p-4 border border-gray-200"
         style={{ width: size, height: size }}
       >
-        <Text color="red" className="text-center" size="1">
-          {error}
-        </Text>
-        <Button onClick={regenerateQRCode} variant="outline" size="1">
+        <p className="text-red-500 text-center text-xs">{error}</p>
+        <Button onClick={regenerateQRCode} variant="outline" size="sm">
           Try Again
         </Button>
       </div>

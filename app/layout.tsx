@@ -1,4 +1,3 @@
-import { Theme } from "@radix-ui/themes";
 import type { Metadata, Viewport } from "next";
 import { Ubuntu } from "next/font/google";
 import "./globals.css";

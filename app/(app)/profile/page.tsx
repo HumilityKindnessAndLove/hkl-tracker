@@ -1,6 +1,5 @@
 "use client";
 
-import { Box, Flex, Heading, Text } from "@radix-ui/themes";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
@@ -31,31 +30,28 @@ export default function ProfilePage() {
         {/* TODO: HKL Logo goes here */}
 
         <div className="w-full max-w-md shadow-2xl rounded-[3rem] bg-white/30 backdrop-blur-3xl backdrop-saturate-150 overflow-hidden ring-1 ring-white/40">
-          <Flex direction="column" gap="4" align="center" className="p-8">
-            <Flex direction="column" align="center" gap="1" className="mt-4">
-              <Heading size="6" className="text-[#174548] text-center">
+          <div className="flex flex-col gap-4 items-center p-8">
+            <div className="flex flex-col items-center gap-1 mt-4">
+              <h2 className="text-2xl font-semibold text-[#174548] text-center">
                 {displayName}
-              </Heading>
-              <Text size="2" className="text-[#5c8279] font-medium">
+              </h2>
+              <p className="text-sm text-[#5c8279] font-medium">
                 HKL Volunteer
-              </Text>
-            </Flex>
+              </p>
+            </div>
 
-            <Box className="my-4">
+            <div className="my-4">
               <QRCodeDisplay size={200} />
-            </Box>
+            </div>
 
-            <Box className="text-center max-w-sm">
-              <Text
-                size="3"
-                className="text-[#5c8279] leading-relaxed font-medium"
-              >
+            <div className="text-center max-w-sm">
+              <p className="text-base text-[#5c8279] leading-relaxed font-medium">
                 Join the wave of humility, kindness and love
-              </Text>
-            </Box>
+              </p>
+            </div>
 
-            <Box className="w-16 h-1 bg-gradient-to-r from-[#EBAD1F] via-[#d2285e] to-[#5c8279] rounded-full mb-2" />
-          </Flex>
+            <div className="w-16 h-1 bg-gradient-to-r from-[#EBAD1F] via-[#d2285e] to-[#5c8279] rounded-full mb-2" />
+          </div>
         </div>
       </div>
       <style jsx>{`
