@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignInButton() {
@@ -15,7 +15,7 @@ export default function SignInButton() {
   };
 
   return (
-    <Button onClick={handleSignIn} size="3" style={{ cursor: "pointer" }}>
+    <Button onClick={handleSignIn} size="lg" className="cursor-pointer">
       Sign in with Google
     </Button>
   );

@@ -1,15 +1,10 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Select,
-  Text,
-  TextField,
-} from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
 import { countries } from "countries-list";
 import Form from "next/form";
 import React, { useMemo } from "react";
@@ -156,134 +151,130 @@ export default function HKLForm() {
   };
 
   return (
-    <Box maxWidth="400px" mx="auto" my="6">
-      <Card size="3" variant="surface">
-        <Heading as="h2" size="5" mb="4" align="center">
-          HKL Pledge Form
-        </Heading>
+    <div className="max-w-md mx-auto my-6">
+      <Card>
+        <div className="p-6">
+          <h2 className="text-2xl font-semibold text-center mb-4">
+            HKL Pledge Form
+          </h2>
 
-        <Form action={handleSubmit}>
-          <Flex direction="column" gap="4">
-            {/* Pledge Name */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Pledge Name <span style={{ color: "red" }}>*</span>
-              </Text>
-              <TextField.Root
-                name="name"
-                placeholder="Enter Your Pledge Name"
-                required
-              />
-            </Flex>
+          <Form action={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              {/* Pledge Name */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="name">
+                  Pledge Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Enter Your Pledge Name"
+                  required
+                />
+              </div>
 
-            {/* Email */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Email <span style={{ color: "red" }}>*</span>
-              </Text>
-              <TextField.Root
-                name="email"
-                type="email"
-                placeholder="Enter Pledge Email"
-                required
-              />
-            </Flex>
+              {/* Email */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="email">
+                  Email <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter Pledge Email"
+                  required
+                />
+              </div>
 
-            {/* Country */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Country <span style={{ color: "red" }}>*</span>
-              </Text>
-              <input type="hidden" name="country" value={selectedCountry} />
-              <Select.Root
-                name="country"
-                value={selectedCountry}
-                onValueChange={setSelectedCountry}
-                required
-              >
-                <Select.Trigger placeholder="Select Country" />
-                <Select.Content>
+              {/* Country */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="country">
+                  Country <span className="text-destructive">*</span>
+                </Label>
+                <NativeSelect
+                  id="country"
+                  name="country"
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  required
+                >
+                  <option value="">Select Country</option>
                   {countryList.map((country) => (
-                    <Select.Item key={country.value} value={country.value}>
+                    <option key={country.value} value={country.value}>
                       {country.label}
-                    </Select.Item>
+                    </option>
                   ))}
-                </Select.Content>
-              </Select.Root>
-            </Flex>
+                </NativeSelect>
+              </div>
 
-            {/* City */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                City <span style={{ color: "red" }}>*</span>
-              </Text>
-              <TextField.Root
-                name="city"
-                placeholder="Enter your City"
-                required
-              />
-            </Flex>
+              {/* City */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="city">
+                  City <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="city"
+                  name="city"
+                  placeholder="Enter your City"
+                  required
+                />
+              </div>
 
-            {/* Preferred Language */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Preferred Language
-              </Text>
-              <input type="hidden" name="language" value={selectedLanguage} />
-              <Select.Root
-                name="language"
-                value={selectedLanguage}
-                onValueChange={setSelectedLanguage}
-              >
-                <Select.Trigger placeholder="Select Language" />
-                <Select.Content>
+              {/* Preferred Language */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="language">Preferred Language</Label>
+                <NativeSelect
+                  id="language"
+                  name="language"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                >
+                  <option value="">Select Language</option>
                   {languages.map((language) => (
-                    <Select.Item key={language.value} value={language.value}>
+                    <option key={language.value} value={language.value}>
                       {language.label}
-                    </Select.Item>
+                    </option>
                   ))}
-                </Select.Content>
-              </Select.Root>
-            </Flex>
+                </NativeSelect>
+              </div>
 
-            {/* Phone Number */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Phone Number
-              </Text>
-              <TextField.Root
-                name="phone"
-                type="tel"
-                placeholder="Enter your Phone Number"
-                onChange={(e) => handlePhoneChange(e.target.value)}
-              >
-                {detectedCountryCode && (
-                  <TextField.Slot side="left">
-                    <Text size="2" color="gray">
+              {/* Phone Number */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <div className="relative">
+                  {detectedCountryCode && (
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                       {detectedCountryCode}
-                    </Text>
-                  </TextField.Slot>
+                    </span>
+                  )}
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="Enter your Phone Number"
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    className={detectedCountryCode ? "pl-12" : ""}
+                  />
+                </div>
+                {phoneError && (
+                  <p className="text-xs text-destructive">{phoneError}</p>
                 )}
-              </TextField.Root>
-              {phoneError && (
-                <Text size="1" color="red">
-                  {phoneError}
-                </Text>
-              )}
-            </Flex>
+              </div>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              size="3"
-              variant="solid"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
-          </Flex>
-        </Form>
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                className="w-full"
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </Form>
+        </div>
       </Card>
-    </Box>
+    </div>
   );
 }
