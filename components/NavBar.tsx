@@ -1,19 +1,14 @@
 "use client";
 
-import {
-  HomeIcon,
-  PaperPlaneIcon,
-  Pencil1Icon,
-  PersonIcon,
-} from "@radix-ui/react-icons";
-import { Button } from "@radix-ui/themes";
+import { Home, Send, Pencil, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/form", label: "HKL Form", icon: PaperPlaneIcon },
-  { href: "/interaction", label: "Interaction", icon: Pencil1Icon },
-  { href: "/profile", label: "Profile", icon: PersonIcon },
+  { href: "/form", label: "HKL Form", icon: Send },
+  { href: "/interaction", label: "Interaction", icon: Pencil },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export default function NavBar({
@@ -30,7 +25,7 @@ export default function NavBar({
       {/* Desktop Navigation - Top */}
       <nav
         ref={topRef}
-        className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-gray-6 bg-[var(--color-background)] backdrop-blur-sm"
+        className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-border bg-[var(--color-background)] backdrop-blur-sm"
       >
         <div className="mx-auto max-w-4xl">
           <ul className="flex items-center justify-between gap-1 p-3">
@@ -38,12 +33,10 @@ export default function NavBar({
             <li>
               <Button
                 asChild
-                variant={pathname === "/" ? "solid" : "soft"}
-                highContrast={pathname === "/"}
-                size="3"
+                variant={pathname === "/" ? "default" : "outline"}
               >
                 <Link href="/" className="flex items-center px-3 py-2">
-                  <HomeIcon />
+                  <Home className="h-4 w-4" />
                 </Link>
               </Button>
             </li>
@@ -55,17 +48,12 @@ export default function NavBar({
                   const active = pathname === href;
                   return (
                     <li key={href}>
-                      <Button
-                        asChild
-                        variant={active ? "solid" : "soft"}
-                        highContrast={active}
-                        size="3"
-                      >
+                      <Button asChild variant={active ? "default" : "outline"}>
                         <Link
                           href={href}
                           className="flex items-center gap-2 px-4 py-2"
                         >
-                          <Icon />
+                          <Icon className="h-4 w-4" />
                           <span>{label}</span>
                         </Link>
                       </Button>
@@ -93,17 +81,12 @@ export default function NavBar({
               const active = pathname === href;
               return (
                 <li key={href}>
-                  <Button
-                    asChild
-                    variant={active ? "solid" : "soft"}
-                    highContrast={active}
-                    size="3"
-                  >
+                  <Button asChild variant={active ? "default" : "outline"}>
                     <Link
                       href={href}
                       className="flex flex-col items-center gap-1 py-2 px-4"
                     >
-                      <Icon />
+                      <Icon className="h-5 w-5" />
                     </Link>
                   </Button>
                 </li>

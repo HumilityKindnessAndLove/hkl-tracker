@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Select,
-  Text,
-  TextArea,
-  TextField,
-} from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import Form from "next/form";
 import React from "react";
 
@@ -104,126 +99,107 @@ export default function InteractionForm() {
   };
 
   return (
-    <Box maxWidth="400px" mx="auto" my="6">
-      <Card size="3" variant="surface">
-        <Heading as="h2" size="5" mb="4" align="center">
-          Add Interaction
-        </Heading>
+    <div className="max-w-md mx-auto my-6">
+      <Card>
+        <div className="p-6">
+          <h2 className="text-2xl font-semibold text-center mb-4">
+            Add Interaction
+          </h2>
 
-        <Form action={handleSubmit}>
-          <Flex direction="column" gap="4">
-            {/* Name */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Pledge Name <span style={{ color: "red" }}>*</span>
-              </Text>
-              <TextField.Root
-                name="name"
-                placeholder="Enter Pledge Name"
-                required
-              />
-            </Flex>
-
-            {/* Type of Interaction */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Type of Interaction
-              </Text>
-              <input type="hidden" name="outcome" value={selectedType} />
-              <Flex gap="2" justify="center" wrap="wrap">
-                {["conversation", "signup", "rejection"].map((type) => (
-                  <Button
-                    key={type}
-                    type="button"
-                    variant={selectedType === type ? "solid" : "outline"}
-                    {...(selectedType !== type
-                      ? { color: "gray" as const }
-                      : {})}
-                    onClick={() => setSelectedType(type)}
-                  >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Button>
-                ))}
-              </Flex>
-            </Flex>
-
-            {/* Friendly or Unfriendly */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                How was the interaction?
-              </Text>
-              <input
-                type="hidden"
-                name="friendly"
-                value={selectedFriendliness}
-              />
-              <Flex gap="2" justify="center" wrap="wrap">
-                {["friendly", "unfriendly"].map((type) => (
-                  <Button
-                    key={type}
-                    type="button"
-                    variant={
-                      selectedFriendliness === type ? "solid" : "outline"
-                    }
-                    {...(selectedFriendliness !== type
-                      ? { color: "gray" as const }
-                      : {})}
-                    onClick={() => setSelectedFriendliness(type)}
-                  >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </Button>
-                ))}
-              </Flex>
-            </Flex>
-
-            {/* Notes */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Additional Notes
-              </Text>
-              <TextArea
-                name="notes"
-                placeholder="Additional notes (optional)"
-              />
-            </Flex>
-
-            {/* Event */}
-            <Flex direction="column" gap="2">
-              <Text as="label" size="2" weight="medium">
-                Event
-              </Text>
-              <Select.Root
-                value={selectedEvent}
-                onValueChange={setSelectedEvent}
-              >
-                <Select.Trigger
-                  placeholder={
-                    isLoadingEvents ? "Loading events..." : "Attach event"
-                  }
+          <Form action={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              {/* Name */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="name">
+                  Pledge Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  placeholder="Enter Pledge Name"
+                  required
                 />
-                <Select.Content>
-                  <Select.Item value="none">None</Select.Item>
-                  {events.map((event) => (
-                    <Select.Item key={event.id} value={event.id}>
-                      {event.title}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-            </Flex>
+              </div>
 
-            {/* Submit */}
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              size="4"
-              style={{ minHeight: "48px" }}
-            >
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </Button>
-          </Flex>
-        </Form>
+              {/* Type of Interaction */}
+              <div className="flex flex-col gap-2">
+                <Label>Type of Interaction</Label>
+                <input type="hidden" name="outcome" value={selectedType} />
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {["conversation", "signup", "rejection"].map((type) => (
+                    <Button
+                      key={type}
+                      type="button"
+                      variant={selectedType === type ? "default" : "outline"}
+                      onClick={() => setSelectedType(type)}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Friendly or Unfriendly */}
+              <div className="flex flex-col gap-2">
+                <Label>How was the interaction?</Label>
+                <input
+                  type="hidden"
+                  name="friendly"
+                  value={selectedFriendliness}
+                />
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {["friendly", "unfriendly"].map((type) => (
+                    <Button
+                      key={type}
+                      type="button"
+                      variant={
+                        selectedFriendliness === type ? "default" : "outline"
+                      }
+                      onClick={() => setSelectedFriendliness(type)}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="notes">Additional Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  placeholder="Additional notes (optional)"
+                />
+              </div>
+              {/* Event */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="event">Event</Label>
+                <NativeSelect
+                  id="event"
+                  value={selectedEvent}
+                  onChange={(e) => setSelectedEvent(e.target.value)}
+                  disabled={isLoadingEvents}
+                >
+                  <option value="none">
+                    {isLoadingEvents ? "Loading events..." : "No Event"}
+                  </option>
+                  {events.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.title}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </div>
+
+              {/* Submit */}
+              <Button type="submit" size="lg" className="w-full min-h-12">
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </Form>
+        </div>
       </Card>
-    </Box>
+    </div>
   );
 }

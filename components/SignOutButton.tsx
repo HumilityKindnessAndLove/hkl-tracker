@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 export default function SignOutButton() {
@@ -14,9 +14,9 @@ export default function SignOutButton() {
   return (
     <Button
       onClick={handleSignOut}
-      size="3"
+      size="lg"
       variant="ghost"
-      style={{ cursor: "pointer" }} // added to show clickable cursor
+      className="cursor-pointer"
     >
       Sign out
     </Button>

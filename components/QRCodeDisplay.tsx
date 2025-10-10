@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, Card, Spinner, Text } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import QRCode from "qrcode";
 import { useCallback, useEffect, useState } from "react";
 
@@ -72,10 +74,10 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
   if (loading) {
     return (
-      <Card size="3">
+      <Card>
         <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <Spinner size="3" />
-          <Text>Generating your QR code...</Text>
+          <Spinner size="lg" />
+          <p className="text-sm">Generating your QR code...</p>
         </div>
       </Card>
     );
@@ -83,11 +85,9 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
 
   if (error) {
     return (
-      <Card size="3">
+      <Card>
         <div className="flex flex-col items-center justify-center space-y-4 p-8">
-          <Text color="red" className="text-center">
-            {error}
-          </Text>
+          <p className="text-destructive text-center text-sm">{error}</p>
           <Button onClick={regenerateQRCode} variant="outline">
             Try Again
           </Button>
@@ -97,33 +97,27 @@ export default function QRCodeDisplay({ size = 256 }: QRCodeDisplayProps) {
   }
 
   return (
-    <Card size="3">
+    <Card>
       <div className="flex flex-col items-center space-y-4 p-6">
-        <Text size="4" weight="bold" className="text-center">
-          Your QR Code
-        </Text>
+        <h3 className="text-lg font-bold text-center">Your QR Code</h3>
 
         {qrCodeDataUrl && (
-          <div className="border border-gray-200 rounded-lg">
-            {/* biome-ignore lint/performance/noImgElement: QR code is a data URL, not a regular image */}
+          <div className="border border-border rounded-lg">
             <img src={qrCodeDataUrl} alt="QR Code" width={size} height={size} />
           </div>
         )}
 
         <div className="flex flex-col items-center space-y-2">
-          <Text size="2" color="gray" className="text-center">
+          <p className="text-sm text-muted-foreground text-center">
             Share this QR code for quick access
-          </Text>
+          </p>
 
           {qrUrl && (
             <div className="flex flex-col items-center space-y-2">
-              <Text
-                size="1"
-                className="text-center font-mono bg-gray-100 p-2 rounded"
-              >
+              <p className="text-xs text-center font-mono bg-muted p-2 rounded">
                 {qrUrl}
-              </Text>
-              <Button onClick={copyToClipboard} variant="outline" size="2">
+              </p>
+              <Button onClick={copyToClipboard} variant="outline" size="sm">
                 Copy URL
               </Button>
             </div>
