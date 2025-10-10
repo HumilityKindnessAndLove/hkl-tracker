@@ -42,7 +42,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <PWAInstaller />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <ContentWrapper>{children}</ContentWrapper>
         </ThemeProvider>
       </body>
