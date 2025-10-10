@@ -17,14 +17,7 @@ export default function NavBar() {
   return (
     <>
       {/* Desktop Navigation - Top */}
-<<<<<<< Updated upstream
       <nav className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-gray-6 bg-[var(--color-background)] backdrop-blur-sm">
-=======
-      <nav
-        ref={topRef}
-        className="hidden md:block fixed top-0 left-0 right-0 z-50 border-b border-border bg-[var(--color-background)] backdrop-blur-sm"
-      >
->>>>>>> Stashed changes
         <div className="mx-auto max-w-4xl">
           <ul className="flex items-center justify-between gap-1 p-3">
             {/* Home button - left aligned */}

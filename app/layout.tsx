@@ -42,22 +42,10 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <PWAInstaller />
-<<<<<<< Updated upstream
-        <Theme
-          accentColor="teal"
-          grayColor="sage"
-          panelBackground="solid"
-          radius="full"
-          scaling="110%"
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NavBar />
           <div className="pt-16 md:pt-20 pb-20 md:pb-4">{children}</div>
-        </Theme>
-=======
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ContentWrapper>{children}</ContentWrapper>
         </ThemeProvider>
->>>>>>> Stashed changes
       </body>
     </html>
   );
