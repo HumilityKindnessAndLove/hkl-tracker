@@ -71,8 +71,7 @@ export async function GET(
     //   return new Response("QR link has expired", { status: 403 });
     // }
 
-    // TODO - ENV VAR
-    const redirectUrl = `https://www.hkl.org/i-commit-test-only?volunteer_id=${qrLink.volunteer_id}`;
+    const redirectUrl = `${process.env.QR_REDIRECT_BASE_URL}?volunteer_id=${qrLink.volunteer_id}`;
 
     // Track the visit asynchronously (extract data before response)
     const ip = getClientIP(request);
