@@ -10,7 +10,6 @@ import Form from "next/form";
 import React, { useMemo } from "react";
 import { validatePhone } from "../lib/phone";
 import Image from "next/image";
-import Image from "next/image";
 
 export default function HKLForm() {
   const [selectedCountry, setSelectedCountry] = React.useState("");

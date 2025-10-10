@@ -10,8 +10,6 @@ import Form from "next/form";
 import React from "react";
 import Image from "next/image";
 
-import Image from "next/image";
-
 
 type Event = {
   id: string;
