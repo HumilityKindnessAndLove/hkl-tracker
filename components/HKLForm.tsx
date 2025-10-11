@@ -1,15 +1,15 @@
 "use client";
 
+import { countries } from "countries-list";
+import Form from "next/form";
+import Image from "next/image";
+import React, { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
-import { countries } from "countries-list";
-import Form from "next/form";
-import React, { useMemo } from "react";
 import { validatePhone } from "../lib/phone";
-import Image from "next/image";
 
 export default function HKLForm() {
   const [selectedCountry, setSelectedCountry] = React.useState("");
@@ -62,19 +62,22 @@ export default function HKLForm() {
       priorityList.includes(c.label),
     );
 
-    const grouped = list.reduce((groups, country) => {
-      if (priorityList.includes(country.label)) {
-        return groups; 
-      }
+    const grouped = list.reduce(
+      (groups, country) => {
+        if (priorityList.includes(country.label)) {
+          return groups;
+        }
 
-      const firstLetter = country.label[0].toUpperCase();
-      if (!groups[firstLetter]) groups[firstLetter] = [];
-      groups[firstLetter].push(country);
-      return groups;
-    }, {} as Record<string, { value: string; label: string; code: string }[]>);
+        const firstLetter = country.label[0].toUpperCase();
+        if (!groups[firstLetter]) groups[firstLetter] = [];
+        groups[firstLetter].push(country);
+        return groups;
+      },
+      {} as Record<string, { value: string; label: string; code: string }[]>,
+    );
 
     return { priority: priorityCountries, grouped };
-  }, [])
+  }, []);
 
   const languages = [
     { value: "english", label: "English" },
@@ -173,12 +176,12 @@ export default function HKLForm() {
   return (
     <div className="max-w-md mx-auto my-6">
       <Image
-          src="/icon.png"
-          alt="HKL Logo"
-          width={80}
-          height={80}
-          style={{ margin: "0 auto", display: "block" }}
-        />
+        src="/icon.png"
+        alt="HKL Logo"
+        width={80}
+        height={80}
+        style={{ margin: "0 auto", display: "block" }}
+      />
       <Card>
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-center mb-4">

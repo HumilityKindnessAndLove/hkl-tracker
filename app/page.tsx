@@ -1,6 +1,6 @@
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "../components/SignOutButton";
 
