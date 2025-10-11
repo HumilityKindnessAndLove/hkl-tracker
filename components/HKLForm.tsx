@@ -1,13 +1,14 @@
 "use client";
 
+import { countries } from "countries-list";
+import Form from "next/form";
+import Image from "next/image";
+import React, { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
-import { countries } from "countries-list";
-import Form from "next/form";
-import React, { useMemo } from "react";
 import { validatePhone } from "../lib/phone";
 
 export default function HKLForm() {
@@ -46,15 +47,37 @@ export default function HKLForm() {
     detectUserCountry();
   }, []);
 
-  const countryList = useMemo(
-    () =>
-      Object.values(countries).map((country) => ({
+  const groupedCountries = useMemo(() => {
+    const list = Object.values(countries)
+      .map((country) => ({
         value: country.name,
         label: country.name,
-        code: country.phone[0],
-      })),
-    [],
-  );
+        code: String(country.phone[0] || ""),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    const priorityList = ["Canada", "United States", "United Kingdom"];
+
+    const priorityCountries = list.filter((c) =>
+      priorityList.includes(c.label),
+    );
+
+    const grouped = list.reduce(
+      (groups, country) => {
+        if (priorityList.includes(country.label)) {
+          return groups;
+        }
+
+        const firstLetter = country.label[0].toUpperCase();
+        if (!groups[firstLetter]) groups[firstLetter] = [];
+        groups[firstLetter].push(country);
+        return groups;
+      },
+      {} as Record<string, { value: string; label: string; code: string }[]>,
+    );
+
+    return { priority: priorityCountries, grouped };
+  }, []);
 
   const languages = [
     { value: "english", label: "English" },
@@ -152,6 +175,13 @@ export default function HKLForm() {
 
   return (
     <div className="max-w-md mx-auto my-6">
+      <Image
+        src="/icon.png"
+        alt="HKL Logo"
+        width={80}
+        height={80}
+        style={{ margin: "0 auto", display: "block" }}
+      />
       <Card>
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-center mb-4">
@@ -200,10 +230,19 @@ export default function HKLForm() {
                   required
                 >
                   <option value="">Select Country</option>
-                  {countryList.map((country) => (
+                  {groupedCountries.priority.map((country) => (
                     <option key={country.value} value={country.value}>
                       {country.label}
                     </option>
+                  ))}
+                  {Object.keys(groupedCountries.grouped).map((letter) => (
+                    <optgroup key={letter} label={letter}>
+                      {groupedCountries.grouped[letter].map((country) => (
+                        <option key={country.value} value={country.value}>
+                          {country.label}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
                 </NativeSelect>
               </div>

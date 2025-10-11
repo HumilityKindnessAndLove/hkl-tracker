@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,8 @@ export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 
 export function Avatar({ className, fallback, alt, ...props }: AvatarProps) {
   const [errored, setErrored] = React.useState(false);
+  const src = typeof props.src === "string" ? props.src : undefined;
+
   return (
     <div
       className={cn(
@@ -16,12 +19,13 @@ export function Avatar({ className, fallback, alt, ...props }: AvatarProps) {
         className,
       )}
     >
-      {!errored && props.src ? (
-        <img
-          alt={alt}
+      {!errored && src ? (
+        <Image
+          alt={alt || "Avatar"}
+          src={src}
+          fill
           onError={() => setErrored(true)}
-          className="h-full w-full object-cover"
-          {...props}
+          className="object-cover"
         />
       ) : (
         <span className="text-sm font-medium text-muted-foreground">
