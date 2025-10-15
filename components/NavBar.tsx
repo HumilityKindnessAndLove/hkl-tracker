@@ -73,7 +73,10 @@ export default function NavBar({
       <nav
         aria-label="Primary"
         ref={bottomRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm pb-1 pt-1"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm pt-2"
+        style={{
+          paddingBottom: "calc(2rem + env(safe-area-inset-bottom))",
+        }}
       >
         <div className="mx-auto max-w-4xl px-8">
           <ul className="flex items-center justify-center gap-4">
