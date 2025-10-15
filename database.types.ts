@@ -14,6 +14,48 @@ export type Database = {
   };
   public: {
     Tables: {
+      brevo_syncs: {
+        Row: {
+          completed_at: string | null;
+          created_at: string;
+          error_message: string | null;
+          failed_records: number;
+          id: string;
+          metadata: Json | null;
+          skipped_records: number;
+          started_at: string;
+          status: string;
+          successful_records: number;
+          total_records_processed: number;
+        };
+        Insert: {
+          completed_at?: string | null;
+          created_at?: string;
+          error_message?: string | null;
+          failed_records?: number;
+          id?: string;
+          metadata?: Json | null;
+          skipped_records?: number;
+          started_at?: string;
+          status: string;
+          successful_records?: number;
+          total_records_processed?: number;
+        };
+        Update: {
+          completed_at?: string | null;
+          created_at?: string;
+          error_message?: string | null;
+          failed_records?: number;
+          id?: string;
+          metadata?: Json | null;
+          skipped_records?: number;
+          started_at?: string;
+          status?: string;
+          successful_records?: number;
+          total_records_processed?: number;
+        };
+        Relationships: [];
+      };
       event_locations: {
         Row: {
           event_id: string;
@@ -89,6 +131,9 @@ export type Database = {
         Row: {
           brevo_error: string | null;
           brevo_id: number | null;
+          brevo_last_attempt_at: string | null;
+          brevo_processed_by_sync_id: string | null;
+          brevo_retry_count: number;
           brevo_sent_at: string | null;
           brevo_status: string | null;
           city: string | null;
@@ -107,6 +152,9 @@ export type Database = {
         Insert: {
           brevo_error?: string | null;
           brevo_id?: number | null;
+          brevo_last_attempt_at?: string | null;
+          brevo_processed_by_sync_id?: string | null;
+          brevo_retry_count?: number;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           city?: string | null;
@@ -125,6 +173,9 @@ export type Database = {
         Update: {
           brevo_error?: string | null;
           brevo_id?: number | null;
+          brevo_last_attempt_at?: string | null;
+          brevo_processed_by_sync_id?: string | null;
+          brevo_retry_count?: number;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           city?: string | null;
@@ -141,6 +192,13 @@ export type Database = {
           volunteer_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "form_submissions_brevo_processed_by_sync_id_fkey";
+            columns: ["brevo_processed_by_sync_id"];
+            isOneToOne: false;
+            referencedRelation: "brevo_syncs";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "form_submissions_location_id_fkey";
             columns: ["location_id"];
