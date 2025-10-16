@@ -224,7 +224,7 @@ export async function GET(request: Request) {
             );
 
             // Store the Brevo process ID and submission IDs
-            await supabase
+            const { error: syncUpdateError } = await supabase
               .from("brevo_syncs")
               .update({
                 status: "processing",
@@ -240,6 +240,17 @@ export async function GET(request: Request) {
                 },
               })
               .eq("id", cronJobId);
+
+            if (syncUpdateError) {
+              console.error(
+                `[Brevo Sync ${cronJobId}] Failed to update sync job with process ID:`,
+                syncUpdateError,
+              );
+            } else {
+              console.log(
+                `[Brevo Sync ${cronJobId}] Updated sync job with process ID: ${brevoResult.process_id}`,
+              );
+            }
           }
         } else {
           // Bulk import failed - mark all submissions as error

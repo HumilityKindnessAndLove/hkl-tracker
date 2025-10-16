@@ -141,7 +141,6 @@ export type Database = {
           language: Database["public"]["Enums"]["language_enum"] | null;
           location_id: string | null;
           name: string | null;
-          payload: Json | null;
           sms: string | null;
           source: string | null;
           volunteer_id: string | null;
@@ -162,7 +161,6 @@ export type Database = {
           language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
           name?: string | null;
-          payload?: Json | null;
           sms?: string | null;
           source?: string | null;
           volunteer_id?: string | null;
@@ -183,7 +181,6 @@ export type Database = {
           language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
           name?: string | null;
-          payload?: Json | null;
           sms?: string | null;
           source?: string | null;
           volunteer_id?: string | null;

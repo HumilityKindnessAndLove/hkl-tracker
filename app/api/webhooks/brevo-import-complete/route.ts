@@ -43,13 +43,25 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
+    // Debug: Check all recent sync jobs
+    const { data: allRecentJobs } = await supabase
+      .from("brevo_syncs")
+      .select("id, brevo_process_id, status, created_at")
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    console.log("[Brevo Webhook] Recent sync jobs:", allRecentJobs);
+
     // Find the brevo_syncs record that matches this process ID
+    // Note: Brevo sends process_id as a string, ensure comparison works
+    console.log(
+      `[Brevo Webhook] Looking for brevo_process_id: "${processId}" (type: ${typeof processId})`,
+    );
+
     const { data: syncJob, error: queryError } = await supabase
       .from("brevo_syncs")
       .select("*")
       .eq("brevo_process_id", processId)
-      .order("completed_at", { ascending: false })
-      .limit(1)
       .maybeSingle();
 
     if (queryError) {
@@ -59,6 +71,13 @@ export async function POST(request: Request) {
         { status: 500 },
       );
     }
+
+    console.log(
+      `[Brevo Webhook] Found sync job:`,
+      syncJob
+        ? `ID: ${syncJob.id}, process_id: ${syncJob.brevo_process_id}`
+        : "null",
+    );
 
     if (syncJob) {
       const metadata = (syncJob.metadata as Record<string, unknown>) || {};
@@ -95,7 +114,7 @@ export async function POST(request: Request) {
       // Since Brevo doesn't tell us which specific contacts failed,
       // we mark all "processing" submissions from this sync as "success"
       if (submissionIds && submissionIds.length > 0) {
-        const { error: submissionUpdateError, count } = await supabase
+        const { error: submissionUpdateError } = await supabase
           .from("form_submissions")
           .update({
             brevo_status: "success",
@@ -109,10 +128,6 @@ export async function POST(request: Request) {
           console.error(
             "[Brevo Webhook] Failed to update form submissions:",
             submissionUpdateError,
-          );
-        } else {
-          console.log(
-            `[Brevo Webhook] Marked ${count || 0} submissions as success`,
           );
         }
       }
