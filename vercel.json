@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync-brevo",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/sync-brevo",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}

@@ -16,43 +16,55 @@ export type Database = {
     Tables: {
       brevo_syncs: {
         Row: {
+          brevo_process_id: string | null;
           completed_at: string | null;
+          contacts_sent: number | null;
           created_at: string;
+          emails_exists: number | null;
           error_message: string | null;
-          failed_records: number;
           id: string;
+          imported_contacts: number | null;
           metadata: Json | null;
-          skipped_records: number;
+          new_emails: number | null;
           started_at: string;
           status: string;
-          successful_records: number;
-          total_records_processed: number;
+          unchanged_contacts: number | null;
+          updated_contacts: number | null;
+          webhook_received_at: string | null;
         };
         Insert: {
+          brevo_process_id?: string | null;
           completed_at?: string | null;
+          contacts_sent?: number | null;
           created_at?: string;
+          emails_exists?: number | null;
           error_message?: string | null;
-          failed_records?: number;
           id?: string;
+          imported_contacts?: number | null;
           metadata?: Json | null;
-          skipped_records?: number;
+          new_emails?: number | null;
           started_at?: string;
           status: string;
-          successful_records?: number;
-          total_records_processed?: number;
+          unchanged_contacts?: number | null;
+          updated_contacts?: number | null;
+          webhook_received_at?: string | null;
         };
         Update: {
+          brevo_process_id?: string | null;
           completed_at?: string | null;
+          contacts_sent?: number | null;
           created_at?: string;
+          emails_exists?: number | null;
           error_message?: string | null;
-          failed_records?: number;
           id?: string;
+          imported_contacts?: number | null;
           metadata?: Json | null;
-          skipped_records?: number;
+          new_emails?: number | null;
           started_at?: string;
           status?: string;
-          successful_records?: number;
-          total_records_processed?: number;
+          unchanged_contacts?: number | null;
+          updated_contacts?: number | null;
+          webhook_received_at?: string | null;
         };
         Relationships: [];
       };
@@ -138,6 +150,7 @@ export type Database = {
           brevo_status: string | null;
           city: string | null;
           country: string | null;
+          created_at: string | null;
           email: string | null;
           id: string;
           language: Database["public"]["Enums"]["language_enum"] | null;
@@ -146,7 +159,6 @@ export type Database = {
           payload: Json | null;
           sms: string | null;
           source: string | null;
-          submitted_at: string | null;
           volunteer_id: string | null;
         };
         Insert: {
@@ -159,6 +171,7 @@ export type Database = {
           brevo_status?: string | null;
           city?: string | null;
           country?: string | null;
+          created_at?: string | null;
           email?: string | null;
           id?: string;
           language?: Database["public"]["Enums"]["language_enum"] | null;
@@ -167,7 +180,6 @@ export type Database = {
           payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
           volunteer_id?: string | null;
         };
         Update: {
@@ -180,6 +192,7 @@ export type Database = {
           brevo_status?: string | null;
           city?: string | null;
           country?: string | null;
+          created_at?: string | null;
           email?: string | null;
           id?: string;
           language?: Database["public"]["Enums"]["language_enum"] | null;
@@ -188,7 +201,6 @@ export type Database = {
           payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
           volunteer_id?: string | null;
         };
         Relationships: [
