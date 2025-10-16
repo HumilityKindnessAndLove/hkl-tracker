@@ -16,55 +16,40 @@ export type Database = {
     Tables: {
       brevo_syncs: {
         Row: {
+          brevo_metadata: Json | null;
           brevo_process_id: string | null;
           completed_at: string | null;
           contacts_sent: number | null;
           created_at: string;
-          emails_exists: number | null;
           error_message: string | null;
           id: string;
-          imported_contacts: number | null;
           metadata: Json | null;
-          new_emails: number | null;
           started_at: string;
           status: string;
-          unchanged_contacts: number | null;
-          updated_contacts: number | null;
-          webhook_received_at: string | null;
         };
         Insert: {
+          brevo_metadata?: Json | null;
           brevo_process_id?: string | null;
           completed_at?: string | null;
           contacts_sent?: number | null;
           created_at?: string;
-          emails_exists?: number | null;
           error_message?: string | null;
           id?: string;
-          imported_contacts?: number | null;
           metadata?: Json | null;
-          new_emails?: number | null;
           started_at?: string;
           status: string;
-          unchanged_contacts?: number | null;
-          updated_contacts?: number | null;
-          webhook_received_at?: string | null;
         };
         Update: {
+          brevo_metadata?: Json | null;
           brevo_process_id?: string | null;
           completed_at?: string | null;
           contacts_sent?: number | null;
           created_at?: string;
-          emails_exists?: number | null;
           error_message?: string | null;
           id?: string;
-          imported_contacts?: number | null;
           metadata?: Json | null;
-          new_emails?: number | null;
           started_at?: string;
           status?: string;
-          unchanged_contacts?: number | null;
-          updated_contacts?: number | null;
-          webhook_received_at?: string | null;
         };
         Relationships: [];
       };

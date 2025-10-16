@@ -164,10 +164,21 @@ export async function GET(request: Request) {
       `[Brevo Sync ${cronJobId}] Prepared ${contactsToImport.length} contacts for import`,
     );
 
-    // Step 4: Import contacts in bulk
+    // Import contacts in bulk
     if (contactsToImport.length > 0) {
       try {
-        const brevoResult = await importBrevoContacts(contactsToImport);
+        // Construct the webhook URL
+        const webhookUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/brevo-import-complete`;
+
+        console.log(
+          `[Brevo Sync ${cronJobId}] Importing with webhook URL: ${webhookUrl}`,
+        );
+
+        const brevoResult = await importBrevoContacts(
+          contactsToImport,
+          undefined, // Use default list IDs
+          webhookUrl,
+        );
 
         if (brevoResult.success) {
           // Update all submissions as "processing" - queued for import
@@ -216,8 +227,7 @@ export async function GET(request: Request) {
             await supabase
               .from("brevo_syncs")
               .update({
-                status: "completed",
-                completed_at: new Date().toISOString(),
+                status: "processing",
                 contacts_sent: contactsToImport.length,
                 brevo_process_id: brevoResult.process_id,
                 metadata: {
@@ -226,6 +236,7 @@ export async function GET(request: Request) {
                   submissions_queried: submissions.length,
                   submissions_filtered: submissionsToProcess.length,
                   submission_ids: submissionIds,
+                  brevo_process_id: brevoResult.process_id,
                 },
               })
               .eq("id", cronJobId);
@@ -305,13 +316,10 @@ export async function GET(request: Request) {
       }
     }
 
-    console.log(
-      `[Brevo Sync ${cronJobId}] Completed - Sent ${contactsToImport.length} contacts to Brevo`,
-    );
-
     return NextResponse.json({
       cronJobId,
-      status: "completed",
+      status: "processing",
+      message: "Import initiated, waiting for webhook confirmation",
       contacts_sent: contactsToImport.length,
       execution_time_ms: Date.now() - startTime,
     });

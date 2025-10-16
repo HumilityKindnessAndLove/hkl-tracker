@@ -1,26 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-/**
- * Webhook endpoint to receive Brevo import completion notifications
- * This is called by Brevo when a bulk import finishes processing
- *
- * Brevo sends URL-encoded form data with these fields (that have been observed):
- * - proc_success: Process ID (unique identifier for this import)
- * - imported_contacts: Total contacts imported
- * - new_emails: Number of new contacts created
- * - emails_exists: Number of existing contacts
- * - updated_contacts: Number of contacts updated
- * - unchanged_contacts: Number of unchanged contacts
- * - listids: Comma-separated list IDs
- * - list_stats[ID][NewContacts]: New contacts per list
- * - list_stats[ID][ExistingContact]: Existing contacts per list
- * - list_stats[ID][MergedContact]: Merged contacts per list
- *
- * Note: Brevo doesn't send individual contact success/failure info,
- * so we mark all "processing" submissions as "success" when webhook confirms.
- */
-
 interface BrevoImportWebhookPayload {
   proc_success?: string; // Process ID
   imported_contacts?: string;
@@ -57,25 +37,20 @@ export async function POST(request: Request) {
     }
 
     console.log(
-      `[Brevo Webhook] Received import completion for process ${processId}:`,
-      {
-        imported_contacts: body.imported_contacts,
-        new_emails: body.new_emails,
-        emails_exists: body.emails_exists,
-        updated_contacts: body.updated_contacts,
-        unchanged_contacts: body.unchanged_contacts,
-      },
+      `[Brevo Webhook] Received import completion for process ${processId}`,
     );
+    console.log("[Brevo Webhook] Full payload:", body);
 
     const supabase = await createClient();
 
     // Find the brevo_syncs record that matches this process ID
-    const { data: syncJobs, error: queryError } = await supabase
+    const { data: syncJob, error: queryError } = await supabase
       .from("brevo_syncs")
       .select("*")
-      .or("status.eq.completed,status.eq.partial")
+      .eq("brevo_process_id", processId)
       .order("completed_at", { ascending: false })
-      .limit(10); // Check last 10 jobs
+      .limit(1)
+      .maybeSingle();
 
     if (queryError) {
       console.error("[Brevo Webhook] Failed to query sync jobs:", queryError);
@@ -85,41 +60,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find the sync job that matches this process ID in metadata
-    const matchingSyncJob = syncJobs?.find(
-      (job) =>
-        job.metadata &&
-        typeof job.metadata === "object" &&
-        "brevo_process_id" in job.metadata &&
-        job.metadata.brevo_process_id === processId,
-    );
-
-    if (matchingSyncJob) {
-      const metadata = matchingSyncJob.metadata as Record<string, unknown>;
+    if (syncJob) {
+      const metadata = (syncJob.metadata as Record<string, unknown>) || {};
       const submissionIds = metadata.submission_ids as string[] | undefined;
 
-      // Update the sync job with Brevo import results
+      // Store the entire webhook payload in brevo_metadata with timestamp
+      const webhookData = {
+        ...body,
+        webhook_received_at: new Date().toISOString(),
+      };
+
+      // Update the sync job with the complete webhook payload and mark as completed
       const { error: updateError } = await supabase
         .from("brevo_syncs")
         .update({
-          webhook_received_at: new Date().toISOString(),
-          imported_contacts: body.imported_contacts
-            ? Number.parseInt(body.imported_contacts, 10)
-            : null,
-          new_emails: body.new_emails
-            ? Number.parseInt(body.new_emails, 10)
-            : null,
-          emails_exists: body.emails_exists
-            ? Number.parseInt(body.emails_exists, 10)
-            : null,
-          updated_contacts: body.updated_contacts
-            ? Number.parseInt(body.updated_contacts, 10)
-            : null,
-          unchanged_contacts: body.unchanged_contacts
-            ? Number.parseInt(body.unchanged_contacts, 10)
-            : null,
+          status: "completed",
+          completed_at: new Date().toISOString(),
+          brevo_metadata: webhookData,
         })
-        .eq("id", matchingSyncJob.id);
+        .eq("id", syncJob.id);
 
       if (updateError) {
         console.error(
@@ -128,7 +87,7 @@ export async function POST(request: Request) {
         );
       } else {
         console.log(
-          `[Brevo Webhook] Updated sync job ${matchingSyncJob.id} with import results`,
+          `[Brevo Webhook] Updated sync job ${syncJob.id} with import results`,
         );
       }
 
