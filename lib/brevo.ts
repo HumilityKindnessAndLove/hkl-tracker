@@ -205,93 +205,65 @@ export async function createBrevoContact(
       contactData.attributes = attributes;
     }
 
-    // Add list IDs - use provided listIds, or fall back to env var, or skip if neither
     const finalListIds = listIds || getDefaultBrevoListIds();
     if (finalListIds && finalListIds.length > 0) {
       contactData.listIds = finalListIds;
     }
 
-    // Set up timeout 1s hardcoded for now
-    // TODO: Remove this.
-    const timeoutMs = 1000;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const response = await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        "api-key": apiKey,
+      },
+      body: JSON.stringify(contactData),
+    });
 
-    try {
-      const response = await fetch("https://api.brevo.com/v3/contacts", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          "api-key": apiKey,
-        },
-        body: JSON.stringify(contactData),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      // Response handling
-      if (response.status === 201) {
-        const result = (await response.json()) as BrevoCreateContactResponse;
-        console.log(`Successfully created Brevo contact for ${email}`);
-        return {
-          success: true,
-          brevo_id: result.id,
-          brevo_status: "success",
-          brevo_sent_at: timestamp,
-        };
-      } else if (response.status === 204) {
-        console.log(`Successfully updated Brevo contact for ${email}`);
-        return {
-          success: true,
-          brevo_status: "success",
-          brevo_sent_at: timestamp,
-        };
-      } else if (response.status === 400) {
-        const errorData = (await response.json()) as BrevoError;
-        console.error(`Brevo API validation error: ${errorData.message}`);
-        return {
-          success: false,
-          brevo_status: "error",
-          brevo_error: `${errorData.code}: ${errorData.message}`,
-          brevo_sent_at: timestamp,
-        };
-      } else if (response.status === 425) {
-        console.error(`Brevo API rate limit or temporary error for ${email}`);
-        return {
-          success: false,
-          brevo_status: "error",
-          brevo_error: "Rate limit or temporary error",
-          brevo_sent_at: timestamp,
-        };
-      } else {
-        const errorData = (await response.json()) as BrevoError;
-        const errorMessage = `${errorData.code}: ${errorData.message || response.statusText}`;
-        console.error(`Brevo API error (${response.status}): ${errorMessage}`);
-        return {
-          success: false,
-          brevo_status: "error",
-          brevo_error: errorMessage,
-          brevo_sent_at: timestamp,
-        };
-      }
-    } catch (fetchError) {
-      clearTimeout(timeoutId);
-
-      // Handle timeout specifically
-      if (fetchError instanceof Error && fetchError.name === "AbortError") {
-        console.error(`Brevo API timeout after ${timeoutMs}ms for ${email}`);
-        return {
-          success: false,
-          brevo_status: "error",
-          brevo_error: `API timeout after ${timeoutMs}ms`,
-          brevo_sent_at: timestamp,
-        };
-      }
-
-      // Re-throw other fetch errors to be handled by outer catch
-      throw fetchError;
+    // Response handling
+    if (response.status === 201) {
+      const result = (await response.json()) as BrevoCreateContactResponse;
+      console.log(`Successfully created Brevo contact for ${email}`);
+      return {
+        success: true,
+        brevo_id: result.id,
+        brevo_status: "success",
+        brevo_sent_at: timestamp,
+      };
+    } else if (response.status === 204) {
+      console.log(`Successfully updated Brevo contact for ${email}`);
+      return {
+        success: true,
+        brevo_status: "success",
+        brevo_sent_at: timestamp,
+      };
+    } else if (response.status === 400) {
+      const errorData = (await response.json()) as BrevoError;
+      console.error(`Brevo API validation error: ${errorData.message}`);
+      return {
+        success: false,
+        brevo_status: "error",
+        brevo_error: `${errorData.code}: ${errorData.message}`,
+        brevo_sent_at: timestamp,
+      };
+    } else if (response.status === 425) {
+      console.error(`Brevo API rate limit or temporary error for ${email}`);
+      return {
+        success: false,
+        brevo_status: "error",
+        brevo_error: "Rate limit or temporary error",
+        brevo_sent_at: timestamp,
+      };
+    } else {
+      const errorData = (await response.json()) as BrevoError;
+      const errorMessage = `${errorData.code}: ${errorData.message || response.statusText}`;
+      console.error(`Brevo API error (${response.status}): ${errorMessage}`);
+      return {
+        success: false,
+        brevo_status: "error",
+        brevo_error: errorMessage,
+        brevo_sent_at: timestamp,
+      };
     }
   } catch (error) {
     console.error("Failed to create Brevo contact:", error);
