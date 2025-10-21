@@ -136,7 +136,7 @@ export default function HKLForm() {
         city: formData.get("city"),
         language: selectedLanguage || null,
         sms: phoneValidation.formatted,
-        submitted_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       };
 
       const response = await fetch("/api/form_submission", {

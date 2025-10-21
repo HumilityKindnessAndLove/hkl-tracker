@@ -26,7 +26,7 @@ export const formSubmissionSchema = z.object({
   location_id: z.string().nullable().optional(),
   payload: z.any().nullable().optional(),
   source: z.string().nullable().optional(),
-  submitted_at: z.string().nullable().optional(),
+  created_at: z.string().nullable().optional(),
 });
 
 export const interactionSchema = z.object({

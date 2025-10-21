@@ -14,6 +14,45 @@ export type Database = {
   };
   public: {
     Tables: {
+      brevo_syncs: {
+        Row: {
+          brevo_metadata: Json | null;
+          brevo_process_id: string | null;
+          completed_at: string | null;
+          contacts_sent: number | null;
+          created_at: string;
+          error_message: string | null;
+          id: string;
+          metadata: Json | null;
+          started_at: string;
+          status: string;
+        };
+        Insert: {
+          brevo_metadata?: Json | null;
+          brevo_process_id?: string | null;
+          completed_at?: string | null;
+          contacts_sent?: number | null;
+          created_at?: string;
+          error_message?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          started_at?: string;
+          status: string;
+        };
+        Update: {
+          brevo_metadata?: Json | null;
+          brevo_process_id?: string | null;
+          completed_at?: string | null;
+          contacts_sent?: number | null;
+          created_at?: string;
+          error_message?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          started_at?: string;
+          status?: string;
+        };
+        Relationships: [];
+      };
       event_locations: {
         Row: {
           event_id: string;
@@ -89,58 +128,71 @@ export type Database = {
         Row: {
           brevo_error: string | null;
           brevo_id: number | null;
+          brevo_last_attempt_at: string | null;
+          brevo_processed_by_sync_id: string | null;
+          brevo_retry_count: number;
           brevo_sent_at: string | null;
           brevo_status: string | null;
           city: string | null;
           country: string | null;
+          created_at: string | null;
           email: string | null;
           id: string;
           language: Database["public"]["Enums"]["language_enum"] | null;
           location_id: string | null;
           name: string | null;
-          payload: Json | null;
           sms: string | null;
           source: string | null;
-          submitted_at: string | null;
           volunteer_id: string | null;
         };
         Insert: {
           brevo_error?: string | null;
           brevo_id?: number | null;
+          brevo_last_attempt_at?: string | null;
+          brevo_processed_by_sync_id?: string | null;
+          brevo_retry_count?: number;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           city?: string | null;
           country?: string | null;
+          created_at?: string | null;
           email?: string | null;
           id?: string;
           language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
           name?: string | null;
-          payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
           volunteer_id?: string | null;
         };
         Update: {
           brevo_error?: string | null;
           brevo_id?: number | null;
+          brevo_last_attempt_at?: string | null;
+          brevo_processed_by_sync_id?: string | null;
+          brevo_retry_count?: number;
           brevo_sent_at?: string | null;
           brevo_status?: string | null;
           city?: string | null;
           country?: string | null;
+          created_at?: string | null;
           email?: string | null;
           id?: string;
           language?: Database["public"]["Enums"]["language_enum"] | null;
           location_id?: string | null;
           name?: string | null;
-          payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
           volunteer_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "form_submissions_brevo_processed_by_sync_id_fkey";
+            columns: ["brevo_processed_by_sync_id"];
+            isOneToOne: false;
+            referencedRelation: "brevo_syncs";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "form_submissions_location_id_fkey";
             columns: ["location_id"];
