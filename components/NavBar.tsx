@@ -73,10 +73,10 @@ export default function NavBar({
       <nav
         aria-label="Primary"
         ref={bottomRef}
-        className="md:hidden fixed bottom-10 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm rounded-full shadow-2xl pb-3 pt-3 mx-6 "
+        className="md:hidden fixed bottom-10 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm rounded-full shadow-2xl pb-3 pt-3 mx-6"
       >
         <div className="mx-auto max-w-4xl px-4">
-          <ul className="flex items-center justify-center gap-20">
+          <ul className="flex items-center justify-around">
             {items.map(({ href, icon: Icon }) => {
               const active = pathname === href;
               return (

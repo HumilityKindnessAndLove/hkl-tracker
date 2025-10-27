@@ -22,7 +22,7 @@ export default async function Home() {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col items-center justify-center">
+   <div className="flex flex-col items-center justify-center min-h-dvh pb-36 md:pb-0 md:pt-20">
       <Image src={HKLLOGO}alt="HKL Logo" width={200} height={100} priority className="mt-10 mb-10"/>
       <div className="text-center mt-4">
         {user ? (
