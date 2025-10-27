@@ -1,3 +1,5 @@
+import Image from "next/image";
+import HKLLOGO from './icon2.png';
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { Avatar } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
@@ -21,8 +23,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="font-bold text-center text-6xl">HKL Tracking App</h1>
-
+      <Image src={HKLLOGO}alt="HKL Logo" width={200} height={100} priority className="mt-10 mb-10"/>
       <div className="text-center mt-4">
         {user ? (
           <div className="flex flex-col items-center">
