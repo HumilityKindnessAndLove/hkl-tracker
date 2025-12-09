@@ -3,8 +3,8 @@
 import { Home, Pencil, Send, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 const items = [
   { href: "/form", label: "HKL Form", icon: Send },
   { href: "/interaction", label: "Interaction", icon: Pencil },
@@ -73,20 +73,21 @@ export default function NavBar({
       <nav
         aria-label="Primary"
         ref={bottomRef}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm pb-1 pt-1"
+        className="md:hidden fixed bottom-10 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm rounded-full shadow-2xl pb-3 pt-3 mx-6"
       >
-        <div className="mx-auto max-w-4xl px-8">
-          <ul className="flex items-center justify-center gap-4">
+        <div className="mx-auto max-w-4xl px-4">
+          <ul className="flex items-center justify-around">
             {items.map(({ href, icon: Icon }) => {
               const active = pathname === href;
               return (
                 <li key={href}>
-                  <Button asChild variant={active ? "default" : "outline"}>
-                    <Link
-                      href={href}
-                      className="flex flex-col items-center gap-1 py-2 px-4"
-                    >
-                      <Icon className="h-5 w-5" />
+                  <Button
+                    asChild
+                    variant={active ? "default" : "outline"}
+                    className="h-16 w-16 rounded-full flex items-center justify-center"
+                  >
+                    <Link href={href}>
+                      <Icon className="!h-10 !w-9" />
                     </Link>
                   </Button>
                 </li>
