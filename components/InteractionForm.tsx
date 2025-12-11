@@ -3,6 +3,7 @@
 import Form from "next/form";
 import Image from "next/image";
 import React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -88,12 +89,12 @@ export default function InteractionForm() {
       const form = document.querySelector("form") as HTMLFormElement;
       if (form) form.reset();
 
-      alert("Interaction submitted successfully!");
+      toast.success("Interaction successfully submitted!");
     } catch (error) {
       console.error("Error submitting interaction:", error);
-      alert(
-        error instanceof Error ? error.message : "Failed to submit interaction",
-      );
+      const message =
+        error instanceof Error ? error.message : "Failed to submit interaction";
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -177,7 +178,7 @@ export default function InteractionForm() {
                 <Textarea
                   id="notes"
                   name="notes"
-                  placeholder="Additional notes (optional)"
+                  placeholder="Add any extra details"
                 />
               </div>
               {/* Event */}

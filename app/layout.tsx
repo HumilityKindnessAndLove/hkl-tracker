@@ -4,6 +4,7 @@ import "./globals.css";
 import ContentWrapper from "@/components/ContentWrapper";
 import PWAInstaller from "@/components/PWAInstaller";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 const ubuntu = Ubuntu({
   variable: "--font-ubuntu",
@@ -46,6 +47,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <ContentWrapper>{children}</ContentWrapper>
         </ThemeProvider>
+        <Toaster richColors closeButton position="top-center" />
       </body>
     </html>
   );
