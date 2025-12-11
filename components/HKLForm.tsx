@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { validatePhone } from "../lib/phone";
+import { toast } from "sonner";
 
 export default function HKLForm() {
   const [selectedCountry, setSelectedCountry] = React.useState("");
@@ -136,7 +137,7 @@ export default function HKLForm() {
         city: formData.get("city"),
         language: selectedLanguage || null,
         sms: phoneValidation.formatted,
-        submitted_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       };
 
       const response = await fetch("/api/form_submission", {
@@ -163,11 +164,12 @@ export default function HKLForm() {
       // Reset form fields
       const form = document.querySelector("form") as HTMLFormElement;
       if (form) form.reset();
-
-      alert("Form submitted successfully!");
+      toast.success("Form successfully submitted!");
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(error instanceof Error ? error.message : "Failed to submit form");
+      const message =
+        error instanceof Error ? error.message : "Failed to submit form";
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -185,7 +187,7 @@ export default function HKLForm() {
       <Card>
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-center mb-4">
-            HKL Pledge Form
+            HKL Pledge
           </h2>
 
           <Form action={handleSubmit}>
@@ -198,7 +200,7 @@ export default function HKLForm() {
                 <Input
                   id="name"
                   name="name"
-                  placeholder="Enter Your Pledge Name"
+                  placeholder="Ex: John Doe"
                   required
                 />
               </div>
@@ -212,7 +214,7 @@ export default function HKLForm() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Enter Pledge Email"
+                  placeholder="Ex: john@gmail.com"
                   required
                 />
               </div>
@@ -255,7 +257,7 @@ export default function HKLForm() {
                 <Input
                   id="city"
                   name="city"
-                  placeholder="Enter your City"
+                  placeholder="Ex: San Francisco"
                   required
                 />
               </div>
@@ -291,7 +293,7 @@ export default function HKLForm() {
                     id="phone"
                     name="phone"
                     type="tel"
-                    placeholder="Enter your Phone Number"
+                    placeholder="Ex: 415-555-5555"
                     onChange={(e) => handlePhoneChange(e.target.value)}
                     className={detectedCountryCode ? "pl-12" : ""}
                   />

@@ -46,7 +46,7 @@ export default function ProfilePage() {
 
             <div className="text-center max-w-sm">
               <p className="text-base text-[#5c8279] leading-relaxed font-medium">
-                Join the wave of humility, kindness and love
+                Join the Movement of Humility, Kindness and Love!
               </p>
             </div>
 

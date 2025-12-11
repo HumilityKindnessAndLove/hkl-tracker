@@ -101,7 +101,7 @@ export type Database = {
           payload: Json | null;
           sms: string | null;
           source: string | null;
-          submitted_at: string | null;
+          created_at: string | null;
           volunteer_id: string | null;
         };
         Insert: {
@@ -119,7 +119,7 @@ export type Database = {
           payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
+          created_at?: string | null;
           volunteer_id?: string | null;
         };
         Update: {
@@ -137,7 +137,7 @@ export type Database = {
           payload?: Json | null;
           sms?: string | null;
           source?: string | null;
-          submitted_at?: string | null;
+          created_at?: string | null;
           volunteer_id?: string | null;
         };
         Relationships: [
