@@ -202,7 +202,12 @@ export default function InteractionForm() {
               </div>
 
               {/* Submit */}
-              <Button type="submit" size="lg" className="w-full min-h-12">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full min-h-12"
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
