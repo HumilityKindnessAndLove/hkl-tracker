@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
+import { INTERACTIONS_FORM_ENABLED } from "@/lib/feature-flags";
 import { createClient } from "@/lib/supabase/server";
 import { validateInteraction } from "@/lib/validators";
 
 export async function POST(request: Request) {
+  if (!INTERACTIONS_FORM_ENABLED) {
+    return NextResponse.json(
+      { error: "Interaction form is disabled" },
+      { status: 403 },
+    );
+  }
+
   try {
     const body = await request.json();
 
