@@ -3,6 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { validateInteraction } from "@/lib/validators";
 
 export async function POST(request: Request) {
+  return NextResponse.json(
+    { error: "Interaction form is disabled" },
+    { status: 403 },
+  );
+
   try {
     const body = await request.json();
 
