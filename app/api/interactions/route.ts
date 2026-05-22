@@ -3,13 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { validateInteraction } from "@/lib/validators";
 
 export async function POST(request: Request) {
-  // biome-ignore lint/correctness/noConstantCondition: interaction form disabled
-  if (true) {
-    return NextResponse.json(
-      { error: "Interaction form is disabled" },
-      { status: 403 },
-    );
-  }
+  return NextResponse.json(
+    { error: "Interaction form is disabled" },
+    { status: 403 },
+  );
 
   try {
     const body = await request.json();
