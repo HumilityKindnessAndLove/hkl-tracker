@@ -1,21 +1,16 @@
 "use client";
 
-import { Home, Pencil, Send, User } from "lucide-react";
+import { Home, Send, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { INTERACTIONS_FORM_ENABLED } from "@/lib/feature-flags";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const items = [
   { href: "/form", label: "HKL Form", icon: Send },
-  { href: "/interaction", label: "Interaction", icon: Pencil },
+  // { href: "/interaction", label: "Interaction", icon: Pencil },
   { href: "/profile", label: "Profile", icon: User },
 ];
-
-const items = INTERACTIONS_FORM_ENABLED
-  ? navItems
-  : navItems.filter((item) => item.href !== "/interaction");
 
 export default function NavBar({
   topRef,
