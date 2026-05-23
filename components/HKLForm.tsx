@@ -176,7 +176,7 @@ export default function HKLForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto my-6">
+    <div className="max-w-md mx-auto my-auto ">
       <Image
         src="/icon.png"
         alt="HKL Logo"
@@ -186,16 +186,19 @@ export default function HKLForm() {
       />
       <Card>
         <div className="p-6">
-          <h2 className="text-2xl font-semibold text-center mb-4">
-            HKL Pledge
+          <h2 className="text-2xl font-semibold text-center mb-4 font-serif">
+            Join the Movement
           </h2>
+          <h3 className="text-sm text-muted-foreground text-center mb-8">
+            Sign up to receive weekly practices that help us become better every day
+          </h3>
 
           <Form action={handleSubmit}>
             <div className="flex flex-col gap-4">
-              {/* Pledge Name */}
+              {/* Name */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="name">
-                  Pledge Name <span className="text-destructive">*</span>
+                  Name <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="name"
