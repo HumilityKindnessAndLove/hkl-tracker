@@ -1,24 +1,76 @@
 "use client";
 
 import { countries } from "countries-list";
-import Form from "next/form";
 import Image from "next/image";
 import React, { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { validatePhone } from "../lib/phone";
-import { toast } from "sonner";
+
+type FormValues = {
+  name: string;
+  email: string;
+  country: string;
+  city: string;
+  language: string;
+  phone: string;
+  phoneCountryCode: string;
+  referralCode: string;
+};
+
+// Build lookup maps once at module level
+const countryList = Object.entries(countries)
+  .map(([code, country]) => ({
+    isoCode: code,
+    name: country.name,
+    dialCode: `+${country.phone[0]}`,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const countryNameToIso = Object.fromEntries(
+  countryList.map((c) => [c.name, c.isoCode]),
+);
 
 export default function HKLForm() {
-  const [selectedCountry, setSelectedCountry] = React.useState("");
-  const [selectedLanguage, setSelectedLanguage] = React.useState("");
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [phoneError, setPhoneError] = React.useState("");
-  const [detectedCountryCode, setDetectedCountryCode] = React.useState("");
   const [userCountryCode, setUserCountryCode] = React.useState("");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    mode: "onTouched",
+    defaultValues: {
+      name: "",
+      email: "",
+      country: "",
+      city: "",
+      language: "",
+      phone: "",
+      phoneCountryCode: "",
+      referralCode: "",
+    },
+  });
+
+  const selectedCountry = watch("country");
+
+  // When country changes, update the phone country code dial code
+  React.useEffect(() => {
+    if (selectedCountry) {
+      const country = countryList.find((c) => c.name === selectedCountry);
+      if (country) {
+        setValue("phoneCountryCode", country.dialCode);
+      }
+    }
+  }, [selectedCountry, setValue]);
 
   React.useEffect(() => {
     const detectUserCountry = async () => {
@@ -26,57 +78,88 @@ export default function HKLForm() {
         const response = await fetch(
           "http://ip-api.com/json/?fields=status,countryCode",
         );
-
         if (!response.ok) {
           throw new Error(`IP API responded with status: ${response.status}`);
         }
-
         const geo = await response.json();
-
         if (geo.status === "success" && geo.countryCode) {
           setUserCountryCode(geo.countryCode);
-          console.log("Detected user country code:", geo.countryCode);
-        } else {
-          setUserCountryCode("");
         }
-      } catch (error) {
-        console.log("Failed to detect user country:", error);
+      } catch {
         setUserCountryCode("");
       }
     };
 
     detectUserCountry();
-  }, []);
+
+    const savedReferral = localStorage.getItem("referralCode");
+    if (savedReferral) setValue("referralCode", savedReferral);
+
+    const savedCountry = localStorage.getItem("country");
+    if (savedCountry) setValue("country", savedCountry);
+
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage) setValue("language", savedLanguage);
+  }, [setValue]);
+
+  // If no country selected, fall back to IP-detected country code
+  React.useEffect(() => {
+    if (!selectedCountry && userCountryCode) {
+      const country = countryList.find((c) => c.isoCode === userCountryCode);
+      if (country) setValue("phoneCountryCode", country.dialCode);
+    }
+  }, [userCountryCode, selectedCountry, setValue]);
+
+  const referralCodes = [
+    "Australia_1",
+    "Australia_2",
+    "Bolivia",
+    "Calgary_1",
+    "Calgary_2",
+    "California_1",
+    "California_2",
+    "Edmonton_1",
+    "Edmonton_2",
+    "France_1",
+    "France_2",
+    "Germany",
+    "India",
+    "Indiana_1",
+    "Indiana_2",
+    "Italy_1",
+    "Italy_2",
+    "Malaysia_1",
+    "Malaysia_2",
+    "Michigan_1",
+    "Michigan_2",
+    "New York_1",
+    "New York_2",
+    "New Zealand_1",
+    "New Zealand_2",
+    "Surrey_1",
+    "Surrey_2",
+    "Toronto_1",
+    "Toronto_2",
+    "UK_1",
+    "UK_2",
+    "Other",
+  ];
 
   const groupedCountries = useMemo(() => {
-    const list = Object.values(countries)
-      .map((country) => ({
-        value: country.name,
-        label: country.name,
-        code: String(country.phone[0] || ""),
-      }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-
     const priorityList = ["Canada", "United States", "United Kingdom"];
-
-    const priorityCountries = list.filter((c) =>
-      priorityList.includes(c.label),
+    const priorityCountries = countryList.filter((c) =>
+      priorityList.includes(c.name),
     );
-
-    const grouped = list.reduce(
+    const grouped = countryList.reduce(
       (groups, country) => {
-        if (priorityList.includes(country.label)) {
-          return groups;
-        }
-
-        const firstLetter = country.label[0].toUpperCase();
-        if (!groups[firstLetter]) groups[firstLetter] = [];
-        groups[firstLetter].push(country);
+        if (priorityList.includes(country.name)) return groups;
+        const letter = country.name[0].toUpperCase();
+        if (!groups[letter]) groups[letter] = [];
+        groups[letter].push(country);
         return groups;
       },
-      {} as Record<string, { value: string; label: string; code: string }[]>,
+      {} as Record<string, typeof countryList>,
     );
-
     return { priority: priorityCountries, grouped };
   }, []);
 
@@ -94,57 +177,29 @@ export default function HKLForm() {
     { value: "spanish", label: "Spanish" },
   ];
 
-  const handlePhoneChange = (value: string) => {
-    if (!value) {
-      setPhoneError("");
-      setDetectedCountryCode("");
-      return;
-    }
-
-    const result = validatePhone(value, selectedCountry, userCountryCode);
-    if (result.isValid) {
-      setDetectedCountryCode(result.detectedCountryCode ?? "");
-      setPhoneError("");
-    } else {
-      setDetectedCountryCode("");
-      setPhoneError(result.error ?? "Invalid phone number");
-    }
-  };
-
-  const handleSubmit = async (formData: FormData) => {
-    setIsSubmitting(true);
-    setPhoneError("");
+  const onSubmit = async (data: FormValues) => {
+    const regionCode =
+      countryNameToIso[data.country] || userCountryCode || "ZZ";
+    const fullNumber = data.phone
+      ? `${data.phoneCountryCode}${data.phone.replace(/[^\d]/g, "")}`
+      : "";
+    const phoneValidation = validatePhone(fullNumber, regionCode);
 
     try {
-      const phoneNumber = formData.get("phone")?.toString() || "";
-
-      const phoneValidation = validatePhone(
-        phoneNumber,
-        selectedCountry,
-        userCountryCode,
-      );
-
-      if (!phoneValidation.isValid && phoneNumber) {
-        setPhoneError(phoneValidation.error ?? "Invalid phone number");
-        setIsSubmitting(false);
-        return;
-      }
-
       const payload = {
-        name: formData.get("name"),
-        email: formData.get("email"),
-        country: selectedCountry || null,
-        city: formData.get("city"),
-        language: selectedLanguage || null,
+        name: data.name,
+        email: data.email,
+        country: data.country || null,
+        city: data.city,
+        language: data.language || null,
         sms: phoneValidation.formatted,
         created_at: new Date().toISOString(),
+        referral_code: data.referralCode || null,
       };
 
       const response = await fetch("/api/form_submission", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -156,22 +211,22 @@ export default function HKLForm() {
       const result = await response.json();
       console.log("Form submitted successfully:", result);
 
-      // Reset form on success
-      setSelectedCountry("");
-      setSelectedLanguage("");
-      setPhoneError("");
+      const savedReferralCode = data.referralCode;
+      const savedCountry = data.country;
+      const savedLanguage = data.language;
 
-      // Reset form fields
-      const form = document.querySelector("form") as HTMLFormElement;
-      if (form) form.reset();
+      reset();
+
+      setValue("referralCode", savedReferralCode);
+      setValue("country", savedCountry);
+      setValue("language", savedLanguage);
+
       toast.success("Form successfully submitted!");
     } catch (error) {
       console.error("Error submitting form:", error);
       const message =
         error instanceof Error ? error.message : "Failed to submit form";
       toast.error(message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -190,10 +245,11 @@ export default function HKLForm() {
             Join the Movement
           </h2>
           <h3 className="text-sm text-muted-foreground text-center mb-8">
-            Sign up to receive weekly practices that help us become better every day
+            Sign up to receive weekly practices that help us become better every
+            day
           </h3>
 
-          <Form action={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
               {/* Name */}
               <div className="flex flex-col gap-2">
@@ -202,10 +258,14 @@ export default function HKLForm() {
                 </Label>
                 <Input
                   id="name"
-                  name="name"
                   placeholder="Ex: John Doe"
-                  required
+                  {...register("name", { required: "Name is required" })}
                 />
+                {errors.name && (
+                  <p className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               {/* Email */}
@@ -215,11 +275,21 @@ export default function HKLForm() {
                 </Label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="Ex: john@gmail.com"
-                  required
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Invalid email address",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <p className="text-xs text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Country */}
@@ -229,27 +299,35 @@ export default function HKLForm() {
                 </Label>
                 <NativeSelect
                   id="country"
-                  name="country"
-                  value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
-                  required
+                  {...register("country", {
+                    required: "Country is required",
+                    onChange: (e) =>
+                      localStorage.setItem("country", e.target.value),
+                  })}
                 >
                   <option value="">Select Country</option>
                   {groupedCountries.priority.map((country) => (
-                    <option key={country.value} value={country.value}>
-                      {country.label}
+                    <option key={country.isoCode} value={country.name}>
+                      {country.name}
                     </option>
                   ))}
-                  {Object.keys(groupedCountries.grouped).map((letter) => (
-                    <optgroup key={letter} label={letter}>
-                      {groupedCountries.grouped[letter].map((country) => (
-                        <option key={country.value} value={country.value}>
-                          {country.label}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
+                  {Object.keys(groupedCountries.grouped)
+                    .sort()
+                    .map((letter) => (
+                      <optgroup key={letter} label={letter}>
+                        {groupedCountries.grouped[letter].map((country) => (
+                          <option key={country.isoCode} value={country.name}>
+                            {country.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
                 </NativeSelect>
+                {errors.country && (
+                  <p className="text-xs text-destructive">
+                    {errors.country.message}
+                  </p>
+                )}
               </div>
 
               {/* City */}
@@ -259,10 +337,14 @@ export default function HKLForm() {
                 </Label>
                 <Input
                   id="city"
-                  name="city"
                   placeholder="Ex: San Francisco"
-                  required
+                  {...register("city", { required: "City is required" })}
                 />
+                {errors.city && (
+                  <p className="text-xs text-destructive">
+                    {errors.city.message}
+                  </p>
+                )}
               </div>
 
               {/* Preferred Language */}
@@ -270,14 +352,15 @@ export default function HKLForm() {
                 <Label htmlFor="language">Preferred Language</Label>
                 <NativeSelect
                   id="language"
-                  name="language"
-                  value={selectedLanguage}
-                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  {...register("language", {
+                    onChange: (e) =>
+                      localStorage.setItem("language", e.target.value),
+                  })}
                 >
                   <option value="">Select Language</option>
-                  {languages.map((language) => (
-                    <option key={language.value} value={language.value}>
-                      {language.label}
+                  {languages.map((lang) => (
+                    <option key={lang.value} value={lang.value}>
+                      {lang.label}
                     </option>
                   ))}
                 </NativeSelect>
@@ -286,24 +369,78 @@ export default function HKLForm() {
               {/* Phone Number */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <div className="relative">
-                  {detectedCountryCode && (
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      {detectedCountryCode}
-                    </span>
-                  )}
+                <div className="flex gap-2">
+                  <NativeSelect
+                    className="w-28 shrink-0"
+                    {...register("phoneCountryCode")}
+                  >
+                    <option value="">Code</option>
+                    {groupedCountries.priority.map((country) => (
+                      <option key={country.isoCode} value={country.dialCode}>
+                        {country.dialCode} {country.isoCode}
+                      </option>
+                    ))}
+                    {Object.keys(groupedCountries.grouped)
+                      .sort()
+                      .map((letter) => (
+                        <optgroup key={letter} label={letter}>
+                          {groupedCountries.grouped[letter].map((country) => (
+                            <option
+                              key={country.isoCode}
+                              value={country.dialCode}
+                            >
+                              {country.dialCode} {country.isoCode}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
+                  </NativeSelect>
                   <Input
                     id="phone"
-                    name="phone"
                     type="tel"
                     placeholder="Ex: 415-555-5555"
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    className={detectedCountryCode ? "pl-12" : ""}
+                    className="flex-1"
+                    {...register("phone", {
+                      validate: (value) => {
+                        if (!value) return true;
+                        const regionCode =
+                          countryNameToIso[watch("country")] ||
+                          userCountryCode ||
+                          "ZZ";
+                        const fullNumber = `${watch("phoneCountryCode")}${value.replace(/[^\d]/g, "")}`;
+                        const result = validatePhone(fullNumber, regionCode);
+                        return (
+                          result.isValid ||
+                          (result.error ?? "Invalid phone number")
+                        );
+                      },
+                    })}
                   />
                 </div>
-                {phoneError && (
-                  <p className="text-xs text-destructive">{phoneError}</p>
+                {errors.phone && (
+                  <p className="text-xs text-destructive">
+                    {errors.phone.message}
+                  </p>
                 )}
+              </div>
+
+              {/* Referral Code */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="referralCode">Referral Code</Label>
+                <NativeSelect
+                  id="referralCode"
+                  {...register("referralCode", {
+                    onChange: (e) =>
+                      localStorage.setItem("referralCode", e.target.value),
+                  })}
+                >
+                  <option value="">Select Referral Code</option>
+                  {referralCodes.map((code) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
+                </NativeSelect>
               </div>
 
               {/* Submit Button */}
@@ -316,7 +453,7 @@ export default function HKLForm() {
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
-          </Form>
+          </form>
         </div>
       </Card>
     </div>
