@@ -27,6 +27,7 @@ export const formSubmissionSchema = z.object({
   payload: z.any().nullable().optional(),
   source: z.string().nullable().optional(),
   created_at: z.string().nullable().optional(),
+  referral_code: z.string().nullable().optional(),
 });
 
 export const interactionSchema = z.object({

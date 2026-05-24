@@ -63,6 +63,7 @@ export async function POST(request: Request) {
               : null,
             SMS: parsed.sms,
             VOLUNTEER_ID: insertPayload.volunteer_id as string | null,
+            REFERRAL_CODE: parsed.referral_code,
           });
 
           // Update the form submission with Brevo result

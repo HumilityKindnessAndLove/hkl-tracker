@@ -23,6 +23,55 @@ type FormValues = {
   referralCode: string;
 };
 
+const languages = [
+  { value: "english", label: "English" },
+  { value: "bulgarian", label: "Bulgarian" },
+  { value: "french", label: "French" },
+  { value: "german", label: "German" },
+  { value: "italian", label: "Italian" },
+  { value: "lithuanian", label: "Lithuanian" },
+  { value: "punjabi", label: "Punjabi" },
+  { value: "polish", label: "Polish" },
+  { value: "malay", label: "Malay" },
+  { value: "russian", label: "Russian" },
+  { value: "spanish", label: "Spanish" },
+];
+
+const referralCodes = [
+  "Australia_1",
+  "Australia_2",
+  "Bolivia",
+  "Calgary_1",
+  "Calgary_2",
+  "California_1",
+  "California_2",
+  "Edmonton_1",
+  "Edmonton_2",
+  "France_1",
+  "France_2",
+  "Germany",
+  "India",
+  "Indiana_1",
+  "Indiana_2",
+  "Italy_1",
+  "Italy_2",
+  "Malaysia_1",
+  "Malaysia_2",
+  "Michigan_1",
+  "Michigan_2",
+  "New York_1",
+  "New York_2",
+  "New Zealand_1",
+  "New Zealand_2",
+  "Surrey_1",
+  "Surrey_2",
+  "Toronto_1",
+  "Toronto_2",
+  "UK_1",
+  "UK_2",
+  "Other",
+];
+
 // Build lookup maps once at module level
 const countryList = Object.entries(countries)
   .map(([code, country]) => ({
@@ -110,41 +159,6 @@ export default function HKLForm() {
     }
   }, [userCountryCode, selectedCountry, setValue]);
 
-  const referralCodes = [
-    "Australia_1",
-    "Australia_2",
-    "Bolivia",
-    "Calgary_1",
-    "Calgary_2",
-    "California_1",
-    "California_2",
-    "Edmonton_1",
-    "Edmonton_2",
-    "France_1",
-    "France_2",
-    "Germany",
-    "India",
-    "Indiana_1",
-    "Indiana_2",
-    "Italy_1",
-    "Italy_2",
-    "Malaysia_1",
-    "Malaysia_2",
-    "Michigan_1",
-    "Michigan_2",
-    "New York_1",
-    "New York_2",
-    "New Zealand_1",
-    "New Zealand_2",
-    "Surrey_1",
-    "Surrey_2",
-    "Toronto_1",
-    "Toronto_2",
-    "UK_1",
-    "UK_2",
-    "Other",
-  ];
-
   const groupedCountries = useMemo(() => {
     const priorityList = ["Canada", "United States", "United Kingdom"];
     const priorityCountries = countryList.filter((c) =>
@@ -162,20 +176,6 @@ export default function HKLForm() {
     );
     return { priority: priorityCountries, grouped };
   }, []);
-
-  const languages = [
-    { value: "english", label: "English" },
-    { value: "bulgarian", label: "Bulgarian" },
-    { value: "french", label: "French" },
-    { value: "german", label: "German" },
-    { value: "italian", label: "Italian" },
-    { value: "lithuanian", label: "Lithuanian" },
-    { value: "punjabi", label: "Punjabi" },
-    { value: "polish", label: "Polish" },
-    { value: "malay", label: "Malay" },
-    { value: "russian", label: "Russian" },
-    { value: "spanish", label: "Spanish" },
-  ];
 
   const onSubmit = async (data: FormValues) => {
     const regionCode =

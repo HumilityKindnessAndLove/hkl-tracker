@@ -103,6 +103,7 @@ export type Database = {
           source: string | null;
           created_at: string | null;
           volunteer_id: string | null;
+          referral_code: string | null;
         };
         Insert: {
           brevo_error?: string | null;
@@ -121,6 +122,7 @@ export type Database = {
           source?: string | null;
           created_at?: string | null;
           volunteer_id?: string | null;
+          referral_code?: string | null;
         };
         Update: {
           brevo_error?: string | null;
@@ -139,6 +141,7 @@ export type Database = {
           source?: string | null;
           created_at?: string | null;
           volunteer_id?: string | null;
+          referral_code?: string | null;
         };
         Relationships: [
           {
