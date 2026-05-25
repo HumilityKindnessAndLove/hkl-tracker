@@ -8,6 +8,7 @@ interface BrevoContact {
     SMS?: string | null;
     YOUR_PREFERRED_LANGUAGE?: string | null;
     VOLUNTEER_ID?: string | null;
+    REFERRAL_CODE?: string | null;
   };
   listIds?: number[];
   updateEnabled?: boolean;
