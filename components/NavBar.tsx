@@ -1,19 +1,19 @@
 "use client";
 
-import { Home, Send, User } from "lucide-react";
+import { Pencil, User, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/form", label: "HKL Form", icon: Send },
+  { href: "/form", label: "HKL Form", icon: Pencil   },
   // { href: "/interaction", label: "Interaction", icon: Pencil },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
 const mobileItems = [
-  { href: "/form", label: "Form", icon: Send },
+  { href: "/form", label: "Form", icon: Pencil   },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
