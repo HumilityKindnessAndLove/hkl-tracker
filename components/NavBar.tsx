@@ -13,7 +13,6 @@ const items = [
 ];
 
 const mobileItems = [
-  { href: "/", label: "Home", icon: Home },
   { href: "/form", label: "Form", icon: Send },
   { href: "/profile", label: "Profile", icon: User },
 ];
@@ -80,9 +79,9 @@ export default function NavBar({
       <nav
         aria-label="Primary"
         ref={bottomRef}
-        className="md:hidden fixed bottom-4 inset-x-4 z-50 rounded-2xl border border-border bg-background/95 p-1.5 shadow-lg backdrop-blur-sm"
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-sm pb-[env(safe-area-inset-bottom)]"
       >
-        <ul className="mx-auto flex h-14 max-w-sm items-center gap-1">
+        <ul className="mx-auto flex h-14 max-w-lg items-stretch">
           {mobileItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href;
             return (
@@ -90,9 +89,9 @@ export default function NavBar({
                 <Link
                   href={href}
                   className={cn(
-                    "flex h-full flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] font-medium transition-colors",
+                    "flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors",
                     active
-                      ? "bg-primary text-primary-foreground shadow-sm"
+                      ? "text-primary"
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
