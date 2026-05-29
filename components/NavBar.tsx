@@ -1,14 +1,19 @@
 "use client";
 
-import { Home, Send, User } from "lucide-react";
+import { Pencil, User, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/form", label: "HKL Form", icon: Send },
+  { href: "/form", label: "HKL Form", icon: Pencil   },
   // { href: "/interaction", label: "Interaction", icon: Pencil },
+  { href: "/profile", label: "Profile", icon: User },
+];
+
+const mobileItems = [
+  { href: "/form", label: "Form", icon: Pencil   },
   { href: "/profile", label: "Profile", icon: User },
 ];
 
@@ -74,28 +79,29 @@ export default function NavBar({
       <nav
         aria-label="Primary"
         ref={bottomRef}
-        className="md:hidden fixed bottom-10 left-0 right-0 z-50 bg-[var(--color-background)] backdrop-blur-sm rounded-full shadow-2xl pb-3 pt-3 mx-6"
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-sm pb-[env(safe-area-inset-bottom)]"
       >
-        <div className="mx-auto max-w-4xl px-4">
-          <ul className="flex items-center justify-around">
-            {items.map(({ href, icon: Icon }) => {
-              const active = pathname === href;
-              return (
-                <li key={href}>
-                  <Button
-                    asChild
-                    variant={active ? "default" : "outline"}
-                    className="h-16 w-16 rounded-full flex items-center justify-center"
-                  >
-                    <Link href={href}>
-                      <Icon className="!h-10 !w-9" />
-                    </Link>
-                  </Button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+        <ul className="mx-auto flex h-14 max-w-lg items-stretch">
+          {mobileItems.map(({ href, label, icon: Icon }) => {
+            const active = pathname === href;
+            return (
+              <li key={href} className="flex-1">
+                <Link
+                  href={href}
+                  className={cn(
+                    "flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors",
+                    active
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-5 w-5" strokeWidth={active ? 2.5 : 2} />
+                  <span>{label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
     </>
   );
