@@ -69,6 +69,7 @@ const referralCodes = [
   "Toronto_2",
   "UK_1",
   "UK_2",
+  "Kingston",
   "Other",
 ];
 
