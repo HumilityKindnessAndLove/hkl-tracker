@@ -88,6 +88,8 @@ const countryNameToIso = Object.fromEntries(
 
 export default function HKLForm() {
   const [userCountryCode, setUserCountryCode] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const submitInFlightRef = React.useRef(false);
 
   const {
     register,
@@ -95,7 +97,7 @@ export default function HKLForm() {
     watch,
     setValue,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormValues>({
     mode: "onTouched",
     defaultValues: {
@@ -179,6 +181,10 @@ export default function HKLForm() {
   }, []);
 
   const onSubmit = async (data: FormValues) => {
+    if (submitInFlightRef.current) return;
+    submitInFlightRef.current = true;
+    setIsSubmitting(true);
+
     const regionCode =
       countryNameToIso[data.country] || userCountryCode || "ZZ";
     const fullNumber = data.phone
@@ -228,6 +234,9 @@ export default function HKLForm() {
       const message =
         error instanceof Error ? error.message : "Failed to submit form";
       toast.error(message);
+    } finally {
+      submitInFlightRef.current = false;
+      setIsSubmitting(false);
     }
   };
 
